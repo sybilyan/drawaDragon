@@ -28,23 +28,33 @@ miniprogram for draw a dragon
 
   3. 为了实现橡皮擦和清除功能（不破坏原图），采用将canvas组件覆盖在image组件上，image组件加载涂鸦前的原图，这样使用橡皮檫时擦掉的区域会显示原图。涂鸦完成后（返回主菜单），先保存canvas得到涂鸦图片，然后在隐藏canvas上先绘制涂鸦前的原图，再绘制涂鸦效果图。就能得到完整的涂鸦后的图片了。
 
-TODO1: UI：需要有一个涂鸦引导，在用户不知道应该怎么画画多大的情况下给予简洁的使用说明。具体形式为第一次进入涂鸦界面会弹出一个框播放gif引导动图，点击任意区域弹窗缩至右下角，再点击可再次观看。之后再进入涂鸦界面不需要主动弹出引导。（可点击下面链接查看UI）
+TODO1: UI：需要有一个涂鸦引导，在用户不知道应该怎么画画多大的情况下给予简洁的使用说明。具体形式为第一次进入涂鸦界面会弹出一个框播放gif引导动图，点击任意区域弹窗缩至右下角，再点观看。之后再进入涂鸦界面不需要主动弹出引导。
 嘿嘿gif还没做好之后发你
 
 <div align="center">
-<img alt="涂鸦界面" src="https://github.com/nimoat/photo-edit/raw/master/image/githubImg/doodlePage.jpg">
+<img alt="涂鸦界面" src="https://github.com/sybilyan/drawaDragon/blob/main/image/todo1.png">
 </div>
 
 TODO2：
 逻辑：现有个小bug，就是无法将多次涂鸦图合并并保存到临时路径中，保存的都是原图+涂鸦图合并。后端接口最终需要三张图片，原图，多次涂鸦合并图，多次涂鸦和原图的合并图。同时这三张图的尺寸要保持一致（可点击下面链接查看图片详情）
-<div align="center">
-<img alt="涂鸦界面" src="https://github.com/nimoat/photo-edit/raw/master/image/githubImg/doodlePage.jpg">
+<div align="left">
+<img alt="原图" src="https://github.com/sybilyan/drawaDragon/blob/main/image/rawImage.jpg">
 </div>
+<div align="left">
+<img alt="涂鸦界面" src="https://github.com/sybilyan/drawaDragon/blob/main/image/doodle.png">
+</div>
+<div align="left">
+<img alt="多次涂鸦和原图的合并图" src="https://github.com/sybilyan/drawaDragon/blob/main/image/doodleImage.jpg">
+</div>
+
+
 
 TODO3：
 UI：在选择颜色按钮上添加一句话： 选择一个你喜欢的龙的颜色，注意多次绘制只可选择同一颜色。
 逻辑：需要把最后一次涂鸦的颜色记下，该参数传递给后端
-
+<div align="center">
+<img alt="线条界面" src="https://github.com/sybilyan/drawaDragon/blob/main/image/todo3.png">
+</div>
 
 ### 三、保存图片
 
@@ -58,9 +68,18 @@ UI：在选择颜色按钮上添加一句话： 选择一个你喜欢的龙的�
 ### 四、我画好了
 
 TODO4：：
-  1. 逻辑 将原图，多次涂鸦合并图，多次涂鸦和原图的合并图，颜色这四个参数通过cloudfunction传至后端图片生成服务器（cloudfunction闫姐来写），有两个接口，post接口传参后会返回一个大致等待时间，即loading的时间，loading时间后再调用get接口获得结果图展示
+  1. 逻辑 将原图，多次涂鸦合并图，多次涂鸦和原图的合并图，颜色这四个参数通过cloudfunction传至后端图片生成服务器（cloudfunction闫姐来写），有两个接口，post接口传参后会返回一个大致等待时间，即loading的时间，loading时间后再调用get接口获得结果图展示。如果还没有结果就加长loading时间，或提示一个网络状态问题需要等待一会（这个exception没有想好怎么做，可以自由发挥一下先）
 
-  2. UI（可点击下面链接查看UI）
-  在选择颜色按钮上添加一句话：页面效果有一个loading
-  返回有四张图显示，用户可点击任何一个图进入图片预览界面（wx.previewImage），长按图片可选择保存本地相册或者发送给微信朋友。
+  2. UI
+  2.1 页面效果有一个loading，loading过程中中间文本框会切换很多搞怪的话。
+  2.2 返回有四张图显示，用户可点击任何一个图进入图片预览界面（wx.previewImage），长按图片可选择保存本地相册或者发送给微信朋友。
+  <div align="center">
+<img alt="等待界面1" src="https://github.com/sybilyan/drawaDragon/blob/main/image/todo4-1.png">
+</div>
+  <div align="center">
+<img alt="等待界面2" src="https://github.com/sybilyan/drawaDragon/blob/main/image/todo4-2.png">
+</div>
+  <div align="center">
+<img alt="显示界面" src="https://github.com/sybilyan/drawaDragon/blob/main/image/todo4-preview.png">
+</div>
 
