@@ -1,5 +1,11 @@
 <!--pages/dragonPage.wxml-->
 <view class="modify-page">
+
+  <view animation="{{guideModalAnimation}}" class="guide-modal" bindtap="stopGifPlayback">
+  <image wx:if="{{isPlayingGif}}" class="gif-image" src="{{gifImagePath}}"></image>
+</view>
+
+
    <!-- 隐藏canvas 保存图片用 -->
   <canvas canvas-id="tempCanvas" disable-scroll="true" style="width:{{tempCanvasWidth}}px; height:{{tempCanvasHeight}}px; position:absolute;left:-999999px"></canvas>
 

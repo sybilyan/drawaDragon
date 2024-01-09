@@ -5,6 +5,8 @@ Page({
    * 页面的初始数据
    */
   data: {
+    gifImagePath: '../../image/a9c52c073ee44d5d9b343b529f224e1d.gif',
+    gifshowFlag:false,
     tempCanvasWidth:0,
     tempCanvasHeight:0,
     imgViewHeight:0,
@@ -39,6 +41,17 @@ Page({
    * self = this 指向的是page
    */
   onLoad(options) {
+
+     // 检查是否是第一次进入涂鸦界面
+  let isFirstTime = wx.getStorageSync('isFirstTime');
+  if (!isFirstTime) {
+    // 如果是第一次，显示引导提示框
+    this.showGuideModal();
+    // 将 isFirstTime 标记为 true，表示已经进入过涂鸦界面
+    // wx.setStorageSync('isFirstTime', true);
+  }
+  },
+  showHB:function(){
     var self = this
     self.device = app.globalData.myDevice
     self.deviceRatio = self.device.windowWidth / 750
@@ -71,6 +84,63 @@ Page({
    */
   onUnload() {},
 
+  // 自定义函数，用于显示引导提示框
+  showGuideModal: function() {
+    let animation = wx.createAnimation({
+      duration: 500,
+      timingFunction: 'ease',
+    });
+
+    animation.translate(0, 0).step();
+
+    this.setData({
+      guideModalAnimation: animation.export(),
+    });
+
+    wx.showModal({
+      title: '欢迎使用涂鸦功能',
+      content: '点击任意区域查看引导 GIF，再次进入将不再弹出。',
+      showCancel: false,
+      success: (res) => {
+        if (res.confirm) {
+          this.playGifAndMoveToBottomRight();
+        }
+      }
+    });
+  },
+  // 在 playGifAndMoveToBottomRight 函数中播放 GIF 并添加动画效果
+playGifAndMoveToBottomRight: function() {
+  let animation = wx.createAnimation({
+    duration: 500,
+    timingFunction: 'ease',
+  });
+
+  animation.translate(wx.getSystemInfoSync().windowWidth - 120, wx.getSystemInfoSync().windowHeight - 220).step();
+
+  this.setData({
+    guideModalAnimation: animation.export(),
+  });
+
+  // 播放 GIF
+  this.setData({
+    isPlayingGif: true,
+  });
+
+  // 在动画结束后，可以延时隐藏引导提示框
+  // setTimeout(() => {
+  //   this.setData({
+  //     isPlayingGif: false,
+  //   });
+  //   this.showHB();
+  // }, 2000);
+},
+// 用户点击  结束播放
+stopGifPlayback(){
+      this.setData({
+      isPlayingGif: false,
+    });
+    this.showHB();
+},
   //展示图片
   bestShow(){
     loadImgOnImage(this)
@@ -78,7 +148,7 @@ Page({
   //保存照片
   saveImgToPhone(){
     wx.previewImage({
-      urls: [this.data.tempImageSrc], // 需要预览的图片http链接列表        
+      urls: [this.data.tempImageSrc], // 需要预览的图片http链接列表
     })
   },
   //选择一张照片
@@ -86,7 +156,7 @@ Page({
     chooseImage(this)
   },
   //缩放图片
-  uploadScaleStart(e) { 
+  uploadScaleStart(e) {
     let self = this
     let xDistance, yDistance
     let [touch0, touch1] = e.touches
@@ -181,7 +251,7 @@ Page({
       allText:{}
     })
   },
-  
+
   //传递涂鸦和原图
   toUploadPage(){
     //todo
@@ -456,7 +526,7 @@ function loadImgOnCanvas(self){
 
       //myCanvas 是 page 的画布
       self.ctx = wx.createCanvasContext('myCanvas')
-      self.ctx.translate((750 * self.deviceRatio) / 2, self.imgViewHeight/ 2) 
+      self.ctx.translate((750 * self.deviceRatio) / 2, self.imgViewHeight/ 2)
       //原点移至中心，保证图片居中显示
       // self.ctx.drawImage(self.data.tempImageSrc, self.startX, self.startY, self.scaleWidth, self.scaleHeight)
       // self.ctx.draw()
@@ -479,7 +549,7 @@ function saveImgUseTempCanvas(self, delay, fn){
       canvasId: 'tempCanvas',
       success: function (res) {
         wx.hideLoading();
-       
+
         //最终结果图保存
         self.setData({
           tempImageSrc: res.tempFilePath
@@ -490,7 +560,7 @@ function saveImgUseTempCanvas(self, delay, fn){
         console.log('result background + doodle :::' + self.data.tempImageSrc);
 
         if(fn){
-          fn(self) 
+          fn(self)
         }
       }
     })
@@ -516,7 +586,7 @@ function saveDoodleTempCanvas(self, delay, fn){
           doodleImageSrc: res.tempFilePath
         })
         if(fn){
-          fn(self) 
+          fn(self)
         }
       }
     })
@@ -553,7 +623,7 @@ function saveDoodle(self, fn) {
           //在background上绘制涂鸦
           ctx1.drawImage(self.data.doodleImageSrc, 0, 0, self.scaleWidth, self.scaleHeight)
           console.log('temp canvas doodle pic =='+self.data.doodleImageSrc)
-          
+
           //必须得调用一次draw,tempCanvas 保存临时文件才有内容
           ctx1.draw()
 
