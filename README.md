@@ -35,7 +35,7 @@ TODO1: UI：需要有一个涂鸦引导，在用户不知道应该怎么画画�
 </div>
 
 TODO2：
-逻辑：现有个小bug，就是无法将多次涂鸦图合并并保存到临时路径中，保存的都是原图+涂鸦图合并。后端接口最终需要三张图片，原图，多次涂鸦合并图，多次涂鸦和原图的合并图。同时这三张图的尺寸要保持一致（可点击下面链接查看图片详情）
+逻辑：现有个小bug，就是无法将多次涂鸦图合并并保存到临时路径中，保存的都是原图+涂鸦图合并。后端接口最终需要三张图片，原图，多次涂鸦合并图，多次涂鸦和原图的合并图。同时这三张图的尺寸要保持一致（下述三张即想要的最终图片例子）
 <div align="left">
 <img alt="原图" src="https://github.com/sybilyan/drawaDragon/blob/main/image/rawImage.jpg">
 </div>
@@ -46,13 +46,15 @@ TODO2：
 <img alt="多次涂鸦和原图的合并图" src="https://github.com/sybilyan/drawaDragon/blob/main/image/doodleImage.jpg">
 </div>
 
-
 TODO3：
 UI：在选择颜色按钮上添加一句话： 选择一个你喜欢的龙的颜色，注意多次绘制只可选择同一颜色。
 逻辑：需要把最后一次涂鸦的颜色记下，该参数(用index)传递给后端
 <div align="center">
 <img alt="线条界面" src="https://github.com/sybilyan/drawaDragon/blob/main/image/todo3.png">
 </div>
+
+TODO5：
+涂鸦还有个问题 现在涂鸦画布统一是白色底+颜色笔，当颜色选白色的时候这个图片就看不出东西了，所以需要把涂鸦统一转变成黑底+白笔么，笔的颜色用字段记下来。但用户看到的还是他选的颜色的笔涂的东西
 
 ### 三、保存图片
 
