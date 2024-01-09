@@ -1,7 +1,6 @@
 // pages/dragonPage.js
 const app = getApp()
 Page({
-
   /**
    * 页面的初始数据
    */
@@ -37,6 +36,7 @@ Page({
 
   /**
    * 生命周期函数--监听页面加载
+   * self = this 指向的是page
    */
   onLoad(options) {
     var self = this
@@ -48,8 +48,29 @@ Page({
       // tempCanvasHeight: self.imgViewHeight,
       page: 'mainPage'
     })
+    //打开图片选择器
     chooseImage(self)
   },
+/**
+   * 生命周期函数--监听页面初次渲染完成
+   */
+  onReady() {},
+
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow() {},
+
+  /**
+   * 生命周期函数--监听页面隐藏
+   */
+  onHide() {},
+
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload() {},
+
   //展示图片
   bestShow(){
     loadImgOnImage(this)
@@ -166,14 +187,15 @@ Page({
     //todo
   },
 
-  //涂鸦窗口
+  //涂鸦窗口-点击涂鸦按钮执行
   toDoodlePage(){
     var self = this
+    //在涂鸦页面展示图片
     loadImgOnCanvas(self)
     self.setData({
+      //这个属性改了有用吗？全局就一个page
       page:'doodlePage',
       canvasHeight: self.device.windowHeight - 160 * self.deviceRatio,
-      allText: {}
     })
   },
   //涂鸦开始
@@ -191,7 +213,7 @@ Page({
     self.doodleStartX = e.touches[0].x - 750 / 2 * self.deviceRatio
     self.doodleStartY = e.touches[0].y - self.imgViewHeight / 2
   },
-  // 触摸移动，绘制中。。。
+  // 触摸移动，绘制中。。。，绘制到了self.ctx 也就是myCanvas
   doodleMove: function (e) {
     var self=this
     self.doodled=true
@@ -337,34 +359,6 @@ Page({
   },
 
   /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {
-
-  },
-
-  /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh() {
@@ -385,20 +379,23 @@ Page({
 
   }
 })
-//选择一个图
+//选择一个图(点击选择图片页面)
 function chooseImage(self){
   wx.chooseImage({
     count: 1,
-    sizeType: ['original '], // 可以指定是原图还是压缩图，默认二者都有
+    sizeType: ['original'], // 可以指定是原图还是压缩图，默认二者都有
     sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
     success: function (res) {
+      //图片选择成功了，res就是选择的图片
       var tempFilePaths = res.tempFilePaths
       console.log('chooseImage tempFilePaths:::'+tempFilePaths)
+      //选好了图片，
       self.setData({
         imageNotChoosed: false,
         tempImageSrc: tempFilePaths[0],
         originImageSrc: tempFilePaths[0],
       })
+      //把选择好的图片，加载出来
       loadImgOnImage(self)
     },
     fail: function (res) {
@@ -408,12 +405,9 @@ function chooseImage(self){
     }
   })
 }
+
 //加载图片在图片上
 function loadImgOnImage(self){
-  //tempImageSrc:原图+涂鸦 合并
-  console.log('loadImgOnImage tempImageSrc is>>>>'+self.data.tempImageSrc),
-  //doodleImageSrc：涂鸦合并
-  console.log('loadImgOnImage doodleImageSrc is>>>>'+self.data.doodleImageSrc),
   wx.getImageInfo({
     src: self.data.tempImageSrc,
     success: function (res) {
@@ -440,12 +434,13 @@ function loadImgOnImage(self){
     }
   })
 }
-//加载图片在画布上
+//加载图片在涂鸦页面的画布上 ,图片应该只在图片容器内加载，不应该放在画布上
 function loadImgOnCanvas(self){
-  console.log("loading while doodle is:::"+self.data.doodleImageSrc),
+  //第二次在page,上加载图片了，第一次是主菜单选择图片
   wx.getImageInfo({
     src: self.data.tempImageSrc,
     success: function (res) {
+      //涂鸦背景图加载成功回调
       self.initRatio = res.height / self.imgViewHeight  //转换为了px 图片原始大小/显示大小
       if (self.initRatio < res.width / (750 * self.deviceRatio)) {
         self.initRatio = res.width / (750 * self.deviceRatio)
@@ -458,18 +453,20 @@ function loadImgOnCanvas(self){
       self.initScaleHeight = self.scaleHeight
       self.startX = -self.scaleWidth / 2;
       self.startY = -self.scaleHeight / 2;
+
+      //myCanvas 是 page 的画布
       self.ctx = wx.createCanvasContext('myCanvas')
-      self.ctx.translate((750 * self.deviceRatio) / 2, self.imgViewHeight/ 2) //原点移至中心，保证图片居中显示
-      self.ctx.drawImage(self.data.tempImageSrc, self.startX, self.startY, self.scaleWidth, self.scaleHeight)
-      self.ctx.draw()
+      self.ctx.translate((750 * self.deviceRatio) / 2, self.imgViewHeight/ 2) 
+      //原点移至中心，保证图片居中显示
+      // self.ctx.drawImage(self.data.tempImageSrc, self.startX, self.startY, self.scaleWidth, self.scaleHeight)
+      // self.ctx.draw()
     }
-  }),
-  console.log("tempImageSrc is:::"+self.data.tempImageSrc)
+  })
 }
 //保存图片到临时路径
 function saveImgUseTempCanvas(self, delay, fn){
   setTimeout(function () {
-    //保存用户效果图
+    //保存用户效果图, 保存tempCanvas的图
     wx.canvasToTempFilePath({
       x:0,
       y:0,
@@ -482,11 +479,16 @@ function saveImgUseTempCanvas(self, delay, fn){
       canvasId: 'tempCanvas',
       success: function (res) {
         wx.hideLoading();
-        console.log('saveImgUseTempCanvas tempFilePaths:::'+res.tempFilePath)
-        console.log('saveImgUseTempCanvas doodleFilePaths:::'+self.data.doodleImageSrc)
+       
+        //最终结果图保存
         self.setData({
           tempImageSrc: res.tempFilePath
         })
+        //打印结果
+        console.log('result background :::' + self.data.originImageSrc);
+        console.log('result doodle :::' + self.data.doodleImageSrc);
+        console.log('result background + doodle :::' + self.data.tempImageSrc);
+
         if(fn){
           fn(self) 
         }
@@ -510,7 +512,6 @@ function saveDoodleTempCanvas(self, delay, fn){
       canvasId: 'doodleCanvas',
       success: function (res) {
         wx.hideLoading();
-        console.log('saveDoodleTempCanvas tempFilePaths:::'+res.tempFilePath)
         self.setData({
           doodleImageSrc: res.tempFilePath
         })
@@ -522,9 +523,8 @@ function saveDoodleTempCanvas(self, delay, fn){
   }, delay)
 }
 
-//保存涂鸦
-function saveDoodle(self,fn) {
-    console.log('save doodle start while doodleimage:::'+self.data.doodleImageSrc)
+//保存涂鸦, myCanvas的涂鸦
+function saveDoodle(self, fn) {
     wx.canvasToTempFilePath({
       x: (750 * self.deviceRatio) / 2 + self.startX,
       y: self.imgViewHeight / 2 + self.startY,
@@ -532,22 +532,32 @@ function saveDoodle(self,fn) {
       height: self.scaleHeight,
       canvasId: 'myCanvas',
       success: function (res) {
+        //将myCanvas画布内容保存到临时文件，
         if(self.cleared){
           self.cleared=false
-          console.log('res.tempFilePath is:::'+res.tempFilePath)
+          console.log('pure doodle :::'+res.tempFilePath)
+          //res此时是对的， 白底+涂鸦
           self.setData({
             doodleImageSrc: res.tempFilePath,
             tempCanvasWidth: self.scaleWidth,
             tempCanvasHeight: self.scaleHeight
           })
+
+          //创建一个临时canvas id = tempCanvas
+          //这个canvas上画了好几层的image
+          //先画出背景图
           var ctx1 = wx.createCanvasContext('tempCanvas')
           ctx1.drawImage(self.data.tempImageSrc, 0, 0, self.scaleWidth,self.scaleHeight)
-          console.log('tempFilePaths 1==='+self.data.tempImageSrc)
+          console.log('temp canvas background pic =='+self.data.tempImageSrc)
+
+          //在background上绘制涂鸦
           ctx1.drawImage(self.data.doodleImageSrc, 0, 0, self.scaleWidth, self.scaleHeight)
-          console.log('tempFilePaths 2==='+self.data.doodleImageSrc)
+          console.log('temp canvas doodle pic =='+self.data.doodleImageSrc)
+          
+          //必须得调用一次draw,tempCanvas 保存临时文件才有内容
           ctx1.draw()
-          console.log('tempFilePaths 3==='+self.data.doodleImageSrc)
-          saveImgUseTempCanvas(self, 100, fn)
+
+          saveImgUseTempCanvas(self, 1000, fn)
         }else{
           self.setData({
             // doodleImageSrc: res.tempFilePath,
