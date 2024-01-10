@@ -1,4 +1,5 @@
 // pages/dragonPage.js
+const canvasUtils = require('../../utils/canvasUtils.js')
 const app = getApp()
 Page({
   /**
@@ -12,9 +13,11 @@ Page({
     imgViewHeight:0,
     page:'mainPage',
     imageNotChoosed:true,
+    resultImage:'',
     minScale: 0.5,
     maxScale: 2.5,
     doodleImageSrc:'',
+    doodleImageSrcArr:[],
     tempImageSrc:'',
     originImageSrc:'',
     imgWidth:0,
@@ -34,6 +37,7 @@ Page({
     // isChooseBack:false,
     isEraser:false,
     allColor: ['#000000', '#FFFFFF', '#00FF00', '#0000FF', '#FFFF00', '#FF0000'],
+    lastLineColor: '',
   },
 
   /**
@@ -378,6 +382,9 @@ stopGifPlayback(){
   //选定画笔颜色
   lineColorChange(e){
     this.lineColor = e.target.dataset.selected
+
+    this.data.lastLineColor=this.lineColor;
+    console.log("lineColorChange  lastLineColor",this.data.lastLineColor)
   },
   //选择橡皮
   chooseEraser(){
@@ -533,6 +540,64 @@ function loadImgOnCanvas(self){
     }
   })
 }
+
+
+// 绘制函数，将多张涂鸦图叠加到 canvas 上
+function drawAllDoodles(tuyaImgsArr,self) {
+  var imagePaths = tuyaImgsArr; // 包含多个图片路径的数组
+  console.log('imagePaths image :::' + imagePaths);
+  self.ctx = wx.createCanvasContext('resultCanvas', self);
+  // 遍历图片路径数组
+  imagePaths.forEach(function (imagePath, index) {
+    // 获取图片信息
+    wx.getImageInfo({
+      src: imagePath,
+      success: function (res) {
+        // 绘制图片
+        self.ctx.drawImage(res.path, 0, 0, self.data.tempCanvasWidth, self.data.tempCanvasHeight);
+
+        // 如果是最后一张图片，保存图片
+        if (index === imagePaths.length - 1) {
+          self.ctx.draw(false, function () {
+            wx.canvasToTempFilePath({
+              x: 0,
+              y: 0,
+              width: self.data.tempCanvasWidth,
+              height: self.data.tempCanvasHeight,
+              destWidth: self.data.tempCanvasWidth,
+              destHeight: self.data.tempCanvasHeight,
+              fileType: 'png',
+              quality: 1,
+              canvasId: 'resultCanvas',
+              success: function (res) {
+                wx.hideLoading();
+
+                // 最终结果图保存
+                self.setData({
+                  resultImagePath: res.tempFilePath
+                });
+
+                // 打印结果
+                console.log('result all tuya  image :::' + self.data.resultImagePath);
+                canvasUtils.convertImagePathToBase64(self.data.resultImagePath, function (err, base64Data) {
+                  if (!err) {
+                    console.log('Base64 data:', base64Data);
+                  } else {
+                    console.error('Failed to convert image to base64:', err);
+                  }
+                })
+
+                if (fn) {
+                  fn(self);
+                }
+              }
+            });
+          });
+        }
+      }
+    });
+  });
+}
 //保存图片到临时路径
 function saveImgUseTempCanvas(self, delay, fn){
   setTimeout(function () {
@@ -565,6 +630,21 @@ function saveImgUseTempCanvas(self, delay, fn){
       }
     })
   }, delay)
+
+  drawAllDoodles(self.data.doodleImageSrcArr,self)
+}
+function convertImagePathToBase64(imagePath, callback) {
+  wx.getFileSystemManager().readFile({
+    filePath: imagePath,
+    encoding: 'base64',
+    success: function (res) {
+      var base64Data = res.data;
+      callback(null, base64Data);
+    },
+    fail: function (err) {
+      callback(err, null);
+    }
+  });
 }
 //保存涂鸦图到临时地址
 function saveDoodleTempCanvas(self, delay, fn){
@@ -606,6 +686,7 @@ function saveDoodle(self, fn) {
         if(self.cleared){
           self.cleared=false
           console.log('pure doodle :::'+res.tempFilePath)
+          self.data.doodleImageSrcArr.push(res.tempFilePath)
           //res此时是对的， 白底+涂鸦
           self.setData({
             doodleImageSrc: res.tempFilePath,

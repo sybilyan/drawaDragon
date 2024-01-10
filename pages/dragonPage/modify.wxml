@@ -8,6 +8,7 @@
 
    <!-- 隐藏canvas 保存图片用 -->
   <canvas canvas-id="tempCanvas" disable-scroll="true" style="width:{{tempCanvasWidth}}px; height:{{tempCanvasHeight}}px; position:absolute;left:-999999px"></canvas>
+ <canvas canvas-id="resultCanvas" disable-scroll="true" style="width:{{tempCanvasWidth}}px; height:{{tempCanvasHeight}}px; position:absolute;left:-999998px"></canvas>
 
   <!-- 主页面 -->
   <view class="imageView" wx:if="{{page==='mainPage'}}" style="height:{{imgViewHeight}}px">
@@ -36,12 +37,12 @@
   <!-- 添加文字页面 -->
   <!-- <view class="imageView" wx:if="{{page==='textPage'}}" style="height:{{imgViewHeight}}px">
     <image src="{{tempImageSrc}}" style="width:{{imgWidth}}px;height:{{imgHeight}}px;top:{{imgTop}}px;left:{{imgLeft}}px" disable-scroll="true"></image>
-    <text wx:if="{{allText.isTextActive}}" bindtap="{{allText.isTextActive?'focusInput':null}}" bindtouchstart="{{allText.isTextActive?'textMoveStart':null}}" bindtouchmove="{{allText.isTextActive?'textMove':null}}"class="active-text" style="left:{{allText.textL}}px;top:{{allText.textT}}px;font-size:{{allText.fontSize}}px;color:{{allText.fontColor}};font-style:{{allText.fontStyle}};font-weight:{{allText.fontWeight}}">{{allText.someText}}</text> 
+    <text wx:if="{{allText.isTextActive}}" bindtap="{{allText.isTextActive?'focusInput':null}}" bindtouchstart="{{allText.isTextActive?'textMoveStart':null}}" bindtouchmove="{{allText.isTextActive?'textMove':null}}"class="active-text" style="left:{{allText.textL}}px;top:{{allText.textT}}px;font-size:{{allText.fontSize}}px;color:{{allText.fontColor}};font-style:{{allText.fontStyle}};font-weight:{{allText.fontWeight}}">{{allText.someText}}</text>
     <input focus="{{inputFocus}}"confirm-type="done" bindinput="inputText" style="position:absolute;left:-9999px;"></input>
   </view> -->
   <!-- 涂鸦页面 -->
   <view class="imageView" wx:if="{{page==='doodlePage'}}" style="height:{{imgViewHeight}}px">
-     <image src="{{tempImageSrc}}" style="width:{{imgWidth}}px;height:{{imgHeight}}px;top:{{imgTop}}px;left:{{imgLeft}}px" disable-scroll="true"></image> 
+     <image src="{{tempImageSrc}}" style="width:{{imgWidth}}px;height:{{imgHeight}}px;top:{{imgTop}}px;left:{{imgLeft}}px" disable-scroll="true"></image>
     <canvas class="myCanvas" canvas-id="myCanvas" disable-scroll="true" bindtouchstart="doodleStart" bindtouchmove="doodleMove" style="width:750rpx; height:{{canvasHeight}}px;"></canvas>
   </view>
 
@@ -63,7 +64,10 @@
       <view class="slider-box"><slider bindchange="widthSliderChange" min="10" max="30" value="10" show-value></slider></view>
     </view>
     <view wx:if="{{isChooseColor}}" class="toolbar-top">
-      <view class="color-box"><view wx:for="{{allColor}}" wx:key="key" class="color-point" data-selected="{{item}}"style="background:{{item}}" bindtap='lineColorChange'></view></view>
+      <view class="color-box"><view wx:for="{{allColor}}" wx:key="key" class="color-point" data-selected="{{item}}"style="background:{{item}}" bindtap='lineColorChange'></view>
+      <view><p style="font-size: 28rpx;">选择一个你喜欢的龙的颜色，注意多次绘制只可选择同一颜色</p></view>
+      </view>
+  
     </view>
     <view class="toolbar-bottom">
       <view bindtap='doodleToMainPage'><text class="icon-back"></text><text class="text">主菜单</text></view>
