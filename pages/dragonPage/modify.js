@@ -1,11 +1,13 @@
 // pages/dragonPage.js
 const canvasUtils = require('../../utils/canvasUtils.js')
+const request = require('../../utils/request.js');
 const app = getApp()
 Page({
   /**
    * 页面的初始数据
    */
   data: {
+    initImage: '',
     gifImagePath: '../../image/a9c52c073ee44d5d9b343b529f224e1d.gif',
     gifshowFlag:false,
     tempCanvasWidth:0,
@@ -51,8 +53,7 @@ Page({
   if (!isFirstTime) {
     // 如果是第一次，显示引导提示框
     this.showGuideModal();
-    // 将 isFirstTime 标记为 true，表示已经进入过涂鸦界面
-    // wx.setStorageSync('isFirstTime', true);
+    wx.setStorageSync('isFirstTime', true);
   }
   },
   showHB:function(){
@@ -154,7 +155,63 @@ stopGifPlayback(){
     wx.previewImage({
       urls: [this.data.tempImageSrc], // 需要预览的图片http链接列表
     })
+    this.saveImageInfo2Server();
   },
+  saveImageInfo2Server(){
+
+    console.log("this.data.initImage resultImagePath ,tempImageSrc",this.data.initImage ,this.data.resultImagePath,this.data.tempImageSrc)
+    //初始图片
+    let initImage="";
+    //所有涂鸦合并图片
+    let tuyaImage="";
+    // 涂鸦+原始图片
+    let finalImage="";
+    //颜色
+    let lasteColor=this.data.lastLineColor;
+    canvasUtils.convertImagePathToBase64(this.data.initImage, function (err, base64Data) {
+      if (!err) {
+        finalImage=base64Data;
+        console.log('Base64 data:', base64Data);
+      } else {
+        console.error('Failed to convert image to base64:', err);
+      }
+    })
+    canvasUtils.convertImagePathToBase64(this.data.resultImagePath, function (err, base64Data) {
+      if (!err) {
+        tuyaImage=base64Data;
+        console.log('Base64 data:', base64Data);
+      } else {
+        console.error('Failed to convert image to base64:', err);
+      }
+    })
+    canvasUtils.convertImagePathToBase64(this.data.tempImageSrc, function (err, base64Data) {
+      if (!err) {
+        finalImage=base64Data;
+        console.log('Base64 data:', base64Data);
+      } else {
+        console.error('Failed to convert image to base64:', err);
+      }
+    })
+    let test={
+      initImage:initImage,
+      tuyaImage:tuyaImage,
+      finalImage:finalImage,
+      lasteColor:lasteColor
+    }
+console.log("test params ",JSON.stringify(test))
+    // // 调用 post 请求
+    // request.post('/submit', { key: 'value' },
+    //   function (data) {
+    //     // 成功处理逻辑
+    //     console.log('POST请求成功', data);
+    //   },
+    //   function (statusCode, errMsg) {
+    //     // 失败处理逻辑
+    //     console.error('POST请求失败', statusCode, errMsg);
+    //     showToast('请求失败');
+    //   });
+},
+
   //选择一张照片
   chooseOneImage(){
     chooseImage(this)
@@ -468,6 +525,7 @@ function chooseImage(self){
       console.log('chooseImage tempFilePaths:::'+tempFilePaths)
       //选好了图片，
       self.setData({
+        initImage:tempFilePaths[0],
         imageNotChoosed: false,
         tempImageSrc: tempFilePaths[0],
         originImageSrc: tempFilePaths[0],
@@ -571,21 +629,10 @@ function drawAllDoodles(tuyaImgsArr,self) {
               canvasId: 'resultCanvas',
               success: function (res) {
                 wx.hideLoading();
-
-                // 最终结果图保存
                 self.setData({
                   resultImagePath: res.tempFilePath
                 });
-
-                // 打印结果
                 console.log('result all tuya  image :::' + self.data.resultImagePath);
-                canvasUtils.convertImagePathToBase64(self.data.resultImagePath, function (err, base64Data) {
-                  if (!err) {
-                    console.log('Base64 data:', base64Data);
-                  } else {
-                    console.error('Failed to convert image to base64:', err);
-                  }
-                })
 
                 if (fn) {
                   fn(self);

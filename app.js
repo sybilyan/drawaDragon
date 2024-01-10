@@ -2,6 +2,7 @@
 App({
 
   globalData: {
+    baseUrl:'',
     longShotImages: '',
     longShotWord:'',
     longImageUse:true,
@@ -18,7 +19,7 @@ App({
     imgUrl:[],
   },
   onLoad(options) {
-
+    console.log("app.js onLoad")
     wx.loadFontFace({
       family: 'Ali',
       source:
@@ -31,6 +32,7 @@ App({
       name:'getOpenid',
       complete:res=>{
         that.globalData.openid = res.result.openid
+        console.log("that.globalData.openid",that.globalData.openid)
         //查找数据库里是否有当前用户
         wx.cloud.database().collection('login_user').where({
           _openid:res.result.openid
