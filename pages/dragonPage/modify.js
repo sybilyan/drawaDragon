@@ -54,6 +54,8 @@ Page({
     // 如果是第一次，显示引导提示框
     this.showGuideModal();
     wx.setStorageSync('isFirstTime', true);
+  }else {
+    this.showHB();
   }
   },
   showHB:function(){
@@ -157,48 +159,25 @@ stopGifPlayback(){
     })
     this.saveImageInfo2Server();
   },
-  saveImageInfo2Server(){
+  async saveImageInfo2Server(){
 
     console.log("this.data.initImage resultImagePath ,tempImageSrc",this.data.initImage ,this.data.resultImagePath,this.data.tempImageSrc)
-    //初始图片
-    let initImage="";
-    //所有涂鸦合并图片
-    let tuyaImage="";
-    // 涂鸦+原始图片
-    let finalImage="";
+    console.log("this.data.lastLineColor",this.data.lastLineColor)
     //颜色
     let lasteColor=this.data.lastLineColor;
-    canvasUtils.convertImagePathToBase64(this.data.initImage, function (err, base64Data) {
-      if (!err) {
-        finalImage=base64Data;
-        console.log('Base64 data:', base64Data);
-      } else {
-        console.error('Failed to convert image to base64:', err);
-      }
-    })
-    canvasUtils.convertImagePathToBase64(this.data.resultImagePath, function (err, base64Data) {
-      if (!err) {
-        tuyaImage=base64Data;
-        console.log('Base64 data:', base64Data);
-      } else {
-        console.error('Failed to convert image to base64:', err);
-      }
-    })
-    canvasUtils.convertImagePathToBase64(this.data.tempImageSrc, function (err, base64Data) {
-      if (!err) {
-        finalImage=base64Data;
-        console.log('Base64 data:', base64Data);
-      } else {
-        console.error('Failed to convert image to base64:', err);
-      }
-    })
-    let test={
-      initImage:initImage,
-      tuyaImage:tuyaImage,
-      finalImage:finalImage,
-      lasteColor:lasteColor
+    //初始图片
+    let initImage = await canvasUtils.convertImagePathToBase64(this.data.initImage);
+    //    //所有涂鸦合并图片
+    let tuyaImage = await canvasUtils.convertImagePathToBase64(this.data.resultImagePath);
+    // 涂鸦+原始图片
+    let finalImage = await canvasUtils.convertImagePathToBase64(this.data.tempImageSrc);
+    let paramsJSON={
+      lasteColor,
+      initImage,
+      tuyaImage,
+      finalImage
     }
-console.log("test params ",JSON.stringify(test))
+console.log("test end  params ",paramsJSON)
     // // 调用 post 请求
     // request.post('/submit', { key: 'value' },
     //   function (data) {
@@ -680,19 +659,7 @@ function saveImgUseTempCanvas(self, delay, fn){
 
   drawAllDoodles(self.data.doodleImageSrcArr,self)
 }
-function convertImagePathToBase64(imagePath, callback) {
-  wx.getFileSystemManager().readFile({
-    filePath: imagePath,
-    encoding: 'base64',
-    success: function (res) {
-      var base64Data = res.data;
-      callback(null, base64Data);
-    },
-    fail: function (err) {
-      callback(err, null);
-    }
-  });
-}
+
 //保存涂鸦图到临时地址
 function saveDoodleTempCanvas(self, delay, fn){
   setTimeout(function () {
