@@ -105,8 +105,9 @@ Page({
     });
 
     wx.showModal({
-      title: '欢迎使用涂鸦功能',
-      content: '点击任意区域查看引导 GIF，再次进入将不再弹出。',
+      title: '欢迎使用画个龙',
+      // content: '点击任意区域查看引导 GIF，再次进入将不再弹出。',
+      content: '接下来将会有一段引导，指引你如何快速盘龙。点击任意区域可缩小哦~',
       showCancel: false,
       success: (res) => {
         if (res.confirm) {
@@ -177,7 +178,7 @@ stopGifPlayback(){
       tuyaImage,
       finalImage
     }
-console.log("test end  params ",paramsJSON)
+  console.log("test end  params ",paramsJSON)
     // // 调用 post 请求
     // request.post('/submit', { key: 'value' },
     //   function (data) {

@@ -65,7 +65,7 @@
     </view>
     <view wx:if="{{isChooseColor}}" class="toolbar-top">
       <view class="color-box"><view wx:for="{{allColor}}" wx:key="key" class="color-point" data-selected="{{item}}"style="background:{{item}}" bindtap='lineColorChange'></view>
-      <view><p style="font-size: 28rpx;">选择一个你喜欢的龙的颜色，注意多次绘制只可选择同一颜色</p></view>
+      <view><p style="font-size: 24rpx; color: rgb(87, 87, 87);">选择一个你喜欢的龙的颜色，注意多次绘制只可选择同一颜色</p></view>
       </view>
   
     </view>
