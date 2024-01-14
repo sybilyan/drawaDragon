@@ -2,7 +2,7 @@
 App({
 
   globalData: {
-    baseUrl:'',
+    baseUrl:'http://dragon.aurobitai.com/dragon/',
     longShotImages: '',
     longShotWord:'',
     longImageUse:true,

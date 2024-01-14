@@ -20,7 +20,7 @@ function showToast(message, icon = 'none') {
 
 // 封装 GET 请求
 function get(url, data, successCallback, failCallback) {
-  showLoading();
+  // showLoading();
   wx.request({
     url: getApp().globalData.baseUrl + url, // 使用全局变量拼接完整的请求地址
     data: data,
@@ -42,7 +42,7 @@ function get(url, data, successCallback, failCallback) {
 
 // 封装 POST 请求
 function post(url, data, successCallback, failCallback) {
-  showLoading();
+  // showLoading();
   wx.request({
     url: getApp().globalData.baseUrl + url, // 使用全局变量拼接完整的请求地址
     data: data,
@@ -63,5 +63,10 @@ function post(url, data, successCallback, failCallback) {
       failCallback(-1, err);
     }
   });
+}
+
+module.exports = {
+  post: post,
+  get: get,
 }
 

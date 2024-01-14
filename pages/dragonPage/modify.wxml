@@ -13,11 +13,10 @@
    <!-- 隐藏canvas 保存图片用 -->
   <canvas canvas-id="tempCanvas" disable-scroll="true" style="width:{{tempCanvasWidth}}px; height:{{tempCanvasHeight}}px; position:absolute;left:-999999px"></canvas>
  <canvas canvas-id="resultCanvas" disable-scroll="true" style="width:{{tempCanvasWidth}}px; height:{{tempCanvasHeight}}px; position:absolute;left:-999998px"></canvas>
-
   <!-- 主页面 -->
   <view class="imageView" wx:if="{{page==='mainPage'}}" style="height:{{imgViewHeight}}px">
     <view class="noImageBox" wx:if="{{imageNotChoosed}}" bindtap='chooseOneImage'><text>点击选择图片</text></view>
-    <view class="saveButton" wx:if="{{!imageNotChoosed}}" bindtap='saveImgToPhone'><text class="icon-save"></text></view>
+    <!-- <view class="saveButton" wx:if="{{!imageNotChoosed}}" bindtap='saveImgToPhone'><text class="icon-save"></text></view> -->
     <image src="{{tempImageSrc}}" style="width:{{imgWidth}}px;height:{{imgHeight}}px;top:{{imgTop}}px;left:{{imgLeft}}px" disable-scroll="true"></image>
   </view>
    <!-- 裁剪页面 -->
@@ -52,6 +51,14 @@
 
   <!-- 主页面-底部 <image src="../../image/1.svg"></image>-->
   <view class="toolbar-bottom" wx:if="{{page==='mainPage'}}">
+  <div wx:if="{{showText}}" class="loadingText">
+            <!-- 文本 -->
+              <div class="text-container">
+          <text  class="text-content" >画个龙，drop个beat</text>
+          </div>
+         <!-- 进度条 -->
+         <progress  color="rgb(154, 16, 5)"  width="1 rpx"  style="width: 80%;margin-left: 10%"  percent="{{progress}}" />
+     </div>
     <view bindtap='toCropPage'><text class="icon-cutter"></text><text class="text">裁剪</text></view>
     <view bindtap='toUploadPage'><text class="icon-text"></text><text class="text">我画好了</text></view>
     <view bindtap='toDoodlePage'><text class="icon-pen"></text><text class="text">涂鸦</text></view>
