@@ -1,8 +1,12 @@
 <!--pages/dragonPage.wxml-->
 <view class="modify-page">
 
-  <view animation="{{guideModalAnimation}}" class="guide-modal" bindtap="stopGifPlayback">
-  <image wx:if="{{isPlayingGif}}" class="gif-image" src="{{gifImagePath}}"></image>
+  <view wx:if="{{isPlayingGif}}" animation="{{guideModalAnimation}}" class="guide-modal" bindtap="stopGifPlaybackShowSmall">
+  <image  class="gif-image" src="{{gifImagePath}}"></image>
+</view>
+
+  <view  wx:if="{{isPlayingGifSmall}}" animation="{{guideModalAnimation}}" class="guide-modal-small" bindtap="stopGifPlayback">
+  <image class="gif-image" src="{{gifImagePath}}"></image>
 </view>
 
 
@@ -67,7 +71,7 @@
       <view class="color-box"><view wx:for="{{allColor}}" wx:key="key" class="color-point" data-selected="{{item}}"style="background:{{item}}" bindtap='lineColorChange'></view>
       <view><p style="font-size: 24rpx; color: rgb(87, 87, 87);">选择一个你喜欢的龙的颜色，注意多次绘制只可选择同一颜色</p></view>
       </view>
-  
+
     </view>
     <view class="toolbar-bottom">
       <view bindtap='doodleToMainPage'><text class="icon-back"></text><text class="text">主菜单</text></view>

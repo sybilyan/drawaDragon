@@ -10,6 +10,7 @@ Page({
     initImage: '',
     gifImagePath: '../../image/a9c52c073ee44d5d9b343b529f224e1d.gif',
     gifshowFlag:false,
+    isPlayingGifSmall:false,
     tempCanvasWidth:0,
     tempCanvasHeight:0,
     imgViewHeight:0,
@@ -49,7 +50,8 @@ Page({
   onLoad(options) {
 
      // 检查是否是第一次进入涂鸦界面
-  let isFirstTime = wx.getStorageSync('isFirstTime');
+  // let isFirstTime = wx.getStorageSync('isFirstTime');
+  let isFirstTime = wx.getStorageSync('isFirstTime1');
   if (!isFirstTime) {
     // 如果是第一次，显示引导提示框
     this.showGuideModal();
@@ -142,10 +144,17 @@ playGifAndMoveToBottomRight: function() {
   //   this.showHB();
   // }, 2000);
 },
+  // 用户点击  结束播放
+  stopGifPlaybackShowSmall(){
+    this.setData({
+      isPlayingGif: false,
+      isPlayingGifSmall: true,
+    });
+  },
 // 用户点击  结束播放
 stopGifPlayback(){
       this.setData({
-      isPlayingGif: false,
+        isPlayingGifSmall: false,
     });
     this.showHB();
 },
