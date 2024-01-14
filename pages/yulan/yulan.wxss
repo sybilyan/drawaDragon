@@ -1,1 +1,31 @@
-/* pages/yulan/yulan.wxss */
+/* pages/index/index.wxss */
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* 设置页面高度为整个视口的高度 */
+}
+.sectionTitle{
+  padding: 20px;
+  color: #FFFFFF;
+  text-align: center;
+  margin-top:20%;
+}
+.section {
+  padding: 20px;
+  color: #FFFFFF;
+  text-align: center;
+}
+
+.image {
+  width: 45%;
+  margin: 2.5%;
+}
+
+.btn {
+  background-color: #FFFFFF;
+  color: #FF69B4;
+  padding: 6px 20px;
+  border: none;
+  border-radius: 5px;
+}

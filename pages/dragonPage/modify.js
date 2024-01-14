@@ -43,6 +43,14 @@ Page({
     isEraser:false,
     allColor: ['#000000', '#FFFFFF', '#00FF00', '#0000FF', '#FFFF00', '#FF0000'],
     lastLineColor: '',
+    colorMap: {
+      '#000000': 'black',
+      '#FFFFFF': 'white',
+      '#00FF00': 'green',
+      '#0000FF': 'blue',
+      '#FFFF00': 'yellow',
+      '#FF0000': 'red',
+    },
   },
 
   /**
@@ -52,8 +60,8 @@ Page({
   onLoad(options) {
 
      // 检查是否是第一次进入涂鸦界面
-  // let isFirstTime = wx.getStorageSync('isFirstTime');
-  let isFirstTime = wx.getStorageSync('isFirstTime1');
+  let isFirstTime = wx.getStorageSync('isFirstTime');
+  // let isFirstTime = wx.getStorageSync('isFirstTime1');
   if (!isFirstTime) {
     // 如果是第一次，显示引导提示框
     this.showGuideModal();
@@ -94,7 +102,17 @@ Page({
    * 生命周期函数--监听页面卸载
    */
   onUnload() {},
+  showCustomerToast: function (text, duration) {
+    wx.showToast({
+      title: text,
+      icon: 'none', // 设置为 'none' 表示不显示图标
+      duration: duration,
+    });
 
+    setTimeout(() => {
+      wx.hideToast();
+    }, duration);
+  },
   // 自定义函数，用于显示引导提示框
   showGuideModal: function() {
     let animation = wx.createAnimation({
@@ -179,7 +197,7 @@ stopGifPlayback(){
 
 
     //颜色
-    let lasteColor=this.data.lastLineColor;
+    let lasteColor=this.data.colorMap[this.data.lastLineColor];
     //初始图片
     let initImage = await canvasUtils.convertImagePathToBase64(this.data.initImage);
     console.log("test end  params  1",initImage)
@@ -196,7 +214,7 @@ stopGifPlayback(){
     let paramsJSON={
       width:this.data.imgWidth,
       height:this.data.imgHeight,
-      color:'white',
+      color:lasteColor,
       file_raw:initImage,
       file_doodle:tuyaImage,
       file_img_doodle:finalImage
@@ -213,12 +231,15 @@ stopGifPlayback(){
       },
       success: function (res) {
         console.log("tpost  res ",res)
-        // if (res.statusCode === 200) {
-        //   this.data.progress=100;
-        //
-        // } else {
-        //   console.log("tpost error  ",res)
-        // }
+        if (res.statusCode === 200) {
+          // this.setData({
+          //   progress:100
+          // });
+          let taskId=res.data.content.task_id;
+          goToPageYulan(taskId)
+        } else {
+          console.log("tpost error  ",res)
+        }
       },
       fail: function (err) {
         console.log("tpost fail  ",err)
@@ -330,7 +351,10 @@ stopGifPlayback(){
 
   //传递涂鸦和原图
   toUploadPage(){
-    //todo
+    console.log("this.data.doodleImageSrcArr.length",this.data.doodleImageSrcArr.length)
+    if (this.data.doodleImageSrcArr.length<1){
+      this.showCustomerToast('请先使用涂鸦，再来使用画好了', 5000);
+    }
   },
 
   //涂鸦窗口-点击涂鸦按钮执行
@@ -530,7 +554,7 @@ stopGifPlayback(){
     });
     // 使用定时器模拟每500毫秒自增一次progress
     const intervalId = setInterval(() => {
-      if (this.data.progress===96){
+      if (this.data.progress==96){
         this.setData({
           progress: 99,
         });

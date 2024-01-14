@@ -1,6 +1,5 @@
 /* pages/dragonPage.wxss */
 
-
 .text-container {
   position: relative;
   display: inline-block;

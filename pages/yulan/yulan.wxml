@@ -1,2 +1,18 @@
-<!--pages/index/index.wxml-->
-<text>pages/index/index.wxml</text>
+<!-- pages/index/index.wxml -->
+
+<view class="page-container" style="background-color: #FF6A80;">
+  <view class="sectionTitle">
+    <text>您的龙龙制作完毕，祝您新年快乐</text>
+  </view>
+
+  <view class="section">
+    <block wx:for="{{images}}" wx:for-item="img">
+         <image src="{{img}}" mode="widthFix" class="image" bindtap="previewImage" bindlongtap="saveImage" data-src="{{img}}" />
+       </block>
+  </view>
+
+  <view class="section" style="display: flex; justify-content: space-between; align-items: center;">
+    <button class="btn" bindtap="goToDraw">返回重新制作</button>
+    <button class="btn" bindtap="onShare">立即分享</button>
+  </view>
+</view>
