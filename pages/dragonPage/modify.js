@@ -61,8 +61,8 @@ Page({
   onLoad(options) {
 
      // 检查是否是第一次进入涂鸦界面
-  // let isFirstTime = wx.getStorageSync('isFirstTime');
-  let isFirstTime = wx.getStorageSync('isFirstTime1');
+  let isFirstTime = wx.getStorageSync('isFirstTime');
+  // let isFirstTime = wx.getStorageSync('isFirstTime1');
   if (!isFirstTime) {
     // 如果是第一次，显示引导提示框
     this.showGuideModal();
@@ -365,7 +365,53 @@ playGifAndMoveToBottomRight: function() {
     console.log("this.data.doodleImageSrcArr.length",this.data.doodleImageSrcArr.length)
     if (this.data.doodleImageSrcArr.length<1){
       this.showCustomerToast('请先使用涂鸦，再来使用画好了', 5000);
+      return;
     }
+
+    this.setData({
+      showText: true,
+    });
+    // 使用定时器模拟每500毫秒自增一次progress
+    const intervalId = setInterval(() => {
+      if (this.data.progress==96){
+        this.setData({
+          progress: 99,
+        });
+      } else if (this.data.progress < 100) {
+        this.setData({
+          progress: this.data.progress + 4,
+        });
+      } else {
+        // 当progress达到100时，清除定时器
+        clearInterval(intervalId);
+        // 在这里执行加载完成后的操作
+        console.log('加载完成 progress');
+      }
+    }, 500);
+    // 封装成 Promise
+    const hideLoading = () => {
+      return new Promise(resolve => {
+        // 设置一个延时操作，比如延迟3秒
+        setTimeout(function () {
+          // 隐藏加载提示
+          wx.hideLoading();
+
+          resolve();
+        }, 3000); // 3000毫秒即3秒
+      });
+    };
+
+    // 使用 Promise 确保在 hideLoading 完成后再执行其他操作
+    hideLoading().then(() => {
+      // 在这里执行加载完成后的操作，例如显示其他内容等
+      console.log('加载完成 this.saveImgToPhone()');
+      // 调用其他函数或执行其他逻辑
+      this.saveImgToPhone();
+
+      this.setData({
+        page: 'mainPage'
+      })
+    });
   },
 
   //涂鸦窗口-点击涂鸦按钮执行
@@ -560,50 +606,6 @@ playGifAndMoveToBottomRight: function() {
     //   mask: true
     // });
 
-    this.setData({
-      showText: true,
-    });
-    // 使用定时器模拟每500毫秒自增一次progress
-    const intervalId = setInterval(() => {
-      if (this.data.progress==96){
-        this.setData({
-          progress: 99,
-        });
-      } else if (this.data.progress < 100) {
-        this.setData({
-          progress: this.data.progress + 4,
-        });
-      } else {
-        // 当progress达到100时，清除定时器
-        clearInterval(intervalId);
-        // 在这里执行加载完成后的操作
-        console.log('加载完成 progress');
-      }
-    }, 500);
-    // 封装成 Promise
-    const hideLoading = () => {
-      return new Promise(resolve => {
-        // 设置一个延时操作，比如延迟3秒
-        setTimeout(function () {
-          // 隐藏加载提示
-          wx.hideLoading();
-
-          resolve();
-        }, 3000); // 3000毫秒即3秒
-      });
-    };
-
-    // 使用 Promise 确保在 hideLoading 完成后再执行其他操作
-    hideLoading().then(() => {
-      // 在这里执行加载完成后的操作，例如显示其他内容等
-      console.log('加载完成 this.saveImgToPhone()');
-      // 调用其他函数或执行其他逻辑
-      this.saveImgToPhone();
-
-      this.setData({
-        page: 'mainPage'
-      })
-    });
   },
 
   //上传图片到SD

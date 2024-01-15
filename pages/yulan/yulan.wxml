@@ -7,7 +7,7 @@
 
   <view class="section">
     <block wx:for="{{images}}" wx:for-item="img">
-         <image src="{{img}}" mode="widthFix" class="image" bindtap="previewImage" bindlongtap="saveImage" data-src="{{img}}" />
+         <image src="{{img}}" mode="widthFix" class="image"  bindtap="previewImage" bindlongtap="saveImage" data-src="{{img}}" />
        </block>
   </view>
 

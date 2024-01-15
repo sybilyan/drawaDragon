@@ -7,7 +7,7 @@
 }
 .sectionTitle{
   padding: 20px;
-  color: #FFFFFF;
+
   text-align: center;
   margin-top:50%;
 }
@@ -20,12 +20,18 @@
 .image {
   width: 45%;
   margin: 2.5%;
+  height: 220rpx !important;
 }
 
 .btn {
-  background-color: #FFFFFF;
-  color: #FF69B4;
-  padding: 6px 20px;
+  padding: 6rpx 20rpx;
   border: none;
-  border-radius: 5px;
+  border-radius: 31rpx;
+  border: 3rpx solid rgba(153, 15, 5, 1);
+  color: rgba(153, 15, 5, 1);
+  background-color:rgb(254, 207, 189);
+  font-size:22rpx;
+  width:30%;
+  margin-top: -8%;
+
 }
