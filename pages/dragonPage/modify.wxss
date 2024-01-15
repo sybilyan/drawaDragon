@@ -1,5 +1,10 @@
 /* pages/dragonPage.wxss */
 
+.modify-page{
+    height: 100%;
+    width: 100%;
+    background-color: #B36E68;
+}
 .text-container {
   position: relative;
   display: inline-block;
@@ -19,13 +24,11 @@
   margin-top: -20%;
   width: 100%;
 }
-.guide-modal-small{
-  position: fixed;
-  margin-left: -4%;
-  margin-top: 10%;
-  width: 30%;
-  height: 10%;
-  background-color: rgba(0, 0, 0, 0.5);  /* 半透明背景 */
+.zy-btn{
+    margin-top: -7%;
+    width: 20%;
+    margin-left: 80%;
+
 }
 .guide-modal {
   position: fixed;

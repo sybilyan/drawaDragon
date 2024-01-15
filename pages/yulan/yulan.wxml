@@ -1,6 +1,6 @@
 <!-- pages/index/index.wxml -->
 
-<view class="page-container" style="background-color: #FF6A80;">
+<view class="page-container" style="background-color:  rgb(254, 207, 189);">
   <view class="sectionTitle">
     <text>您的龙龙制作完毕，祝您新年快乐</text>
   </view>
