@@ -230,8 +230,9 @@ playGifAndMoveToBottomRight: function() {
       file_doodle:tuyaImage,
       file_img_doodle:finalImage
     }
-
+    wx.setStorageSync('uploadParams', paramsJSON);
   console.log("test end  params ",paramsJSON)
+    let that=this
     // 调用 post 请求
     wx.request({
       url: app.globalData.baseUrl + "upload", // 使用全局变量拼接完整的请求地址
@@ -247,7 +248,21 @@ playGifAndMoveToBottomRight: function() {
           //   progress:100
           // });
           let taskId=res.data.content.task_id;
-          goToPageYulan(taskId)
+          that.getImageForTaskId(taskId).then((getImageResult)=>{
+            console.log("getImageResult",getImageResult)
+            if (getImageResult.status==201&&getImageResult.wait_time>0){
+              console.log("getImageResult.wait_time",getImageResult.wait_time)
+
+              setTimeout(() => {
+                that.setData({
+                  progress: 100,
+                });
+                goToPageYulan(taskId);
+              },getImageResult.wait_time*1000)
+              // setTimeout({},)
+            }
+          });
+
         } else {
           console.log("tpost error  ",res)
         }
@@ -258,7 +273,24 @@ playGifAndMoveToBottomRight: function() {
       }
     });
 },
-
+  getImageForTaskId(tskId) {
+    console.log("getImageForTaskId",tskId)
+    return new Promise((resolve, reject) => {
+      wx.request({
+        url: getApp().globalData.baseUrl + 'getImg/' + tskId, // 使用全局变量拼接完整的请求地址
+        data: {"task_id": tskId},
+        method: 'GET',
+        success: (res) => {
+          console.log("success", res)
+          resolve(res.data);
+        },
+        fail: (err) => {
+          console.log("fail", err)
+          reject(error);
+        }
+      });
+    });
+  },
   //选择一张照片
   chooseOneImage(){
     chooseImage(this)
@@ -374,8 +406,9 @@ playGifAndMoveToBottomRight: function() {
     // 使用定时器模拟每500毫秒自增一次progress
     const intervalId = setInterval(() => {
       if (this.data.progress==96){
+        // console.log("this.data.progress",this.data.progress)
         this.setData({
-          progress: 99,
+          progress: 96,
         });
       } else if (this.data.progress < 100) {
         this.setData({
@@ -387,7 +420,7 @@ playGifAndMoveToBottomRight: function() {
         // 在这里执行加载完成后的操作
         console.log('加载完成 progress');
       }
-    }, 500);
+    }, 1000);
     // 封装成 Promise
     const hideLoading = () => {
       return new Promise(resolve => {

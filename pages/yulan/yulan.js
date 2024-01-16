@@ -7,61 +7,113 @@ Page({
    * 页面的初始数据
    */
   data: {
-    images: [
-    ],
-    taskId:''
+    images: [],
+    waitTime: 0,
+    taskId: ''
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    console.log("options",options)
-   let tskId= options.taskId;
-   // let tskId= "20240113_183629_9cb03860b1ff11eea3b83fceaaad50e0";
-   //        this.setData({
-   //          images:["https://d22742htoga38q.cloudfront.net/dragon/" + tskId + "_0.png",
-   //            "https://d22742htoga38q.cloudfront.net/dragon/" + tskId + "_1.png",
-   //            "https://d22742htoga38q.cloudfront.net/dragon/" + tskId + "_2.png",
-   //            "https://d22742htoga38q.cloudfront.net/dragon/" + tskId + "_3.png"]
-   //        })
-    // 使用 GET 请求
+    console.log("options", options)
+    let tskId = options.taskId;
+     this.getImageForTaskId(tskId).then((getImageResult)=>{
+      console.log("getImageResult",getImageResult)
+      if (getImageResult.status==200){
+        console.log("success")
+          this.setData({
+            images: r2.picture_list
+          })
+      }else {
+        let that=this;
+        wx.showModal({
+          title: '龙气混乱',
+          // content: '点击任意区域查看引导 GIF，再次进入将不再弹出。',
+          content: '目前龙气混乱，请重新上传',
+          showCancel: false,
+          success: (ts) => {
+            if (ts.confirm) {
+              wx.showLoading({
+                title: '上传中',
+                mask: true,
+              })
+              wx.request({
+                url: app.globalData.baseUrl + "upload", // 使用全局变量拼接完整的请求地址
+                data: wx.getStorageSync('uploadParams'),
+                method: 'POST',
+                header: {
+                  'content-type': 'application/json' // 根据实际情况设置请求头
+                },
+                success: function (res) {
+                  console.log("tpost second  res ", res)
+                  if (res.statusCode === 200) {
 
-    wx.request({
-      url: getApp().globalData.baseUrl + 'getImg', // 使用全局变量拼接完整的请求地址
-      data: {"task_id":tskId},
-      method: 'GET',
-      success:  (res)=> {
-        console.log("success",res)
-        if (res.statusCode === 200) {
-          this.setData({
-            images:["https://d22742htoga38q.cloudfront.net/dragon/" + tskId + "_0.png",
-              "https://d22742htoga38q.cloudfront.net/dragon/" + tskId + "_1.png",
-              "https://d22742htoga38q.cloudfront.net/dragon/" + tskId + "_2.png",
-              "https://d22742htoga38q.cloudfront.net/dragon/" + tskId + "_3.png"]
-          })
-        } else {
-          this.setData({
-            images:["https://d22742htoga38q.cloudfront.net/dragon/" + tskId + "_0.png",
-              "https://d22742htoga38q.cloudfront.net/dragon/" + tskId + "_1.png",
-              "https://d22742htoga38q.cloudfront.net/dragon/" + tskId + "_2.png",
-              "https://d22742htoga38q.cloudfront.net/dragon/" + tskId + "_3.png"]
-          })
-        }
-      },
-      fail:  (err) =>{
-        console.log("fail",err)
-        this.setData({
-          images:["https://d22742htoga38q.cloudfront.net/dragon/" + tskId + "_0.png",
-            "https://d22742htoga38q.cloudfront.net/dragon/" + tskId + "_1.png",
-            "https://d22742htoga38q.cloudfront.net/dragon/" + tskId + "_2.png",
-            "https://d22742htoga38q.cloudfront.net/dragon/" + tskId + "_3.png"]
-        })
+                    let taskId = res.data.content.task_id;
+                    that.getImageForTaskId(taskId).then((getImageResult) => {
+                      console.log("getImageResult second", getImageResult)
+                      if (getImageResult.status == 201 && getImageResult.wait_time > 0) {
+                        console.log("getImageResult.wait_time second", getImageResult.wait_time)
+                        setTimeout(() => {
+                          that.getImageForTaskId(tskId).then((getImageResult) => {
+                            console.log("getImageResult", getImageResult)
+                            wx.hideLoading();
+                            if (getImageResult.status == 200) {
+                              console.log("success")
+                              that.setData({
+                                images: r2.picture_list
+                              })
+                            } else {
+                              wx.showLoading({
+                                title: '仍旧处于混乱中 稍后重试',
+                                mask: true,
+                              })
+
+                              setTimeout(() => {
+                                wx.hideLoading();
+                              }, 2000)
+                            }
+                          });
+
+                        }, getImageResult.wait_time * 1000)
+                        // setTimeout({},)
+                      }
+                    });
+
+                  } else {
+                    console.log("tpost error  ", res)
+                  }
+                },
+                fail: function (err) {
+                  console.log("tpost fail  ", err)
+
+                }
+              });
+            }
+          }
+        });
       }
     });
 
   },
-
+  getImageForTaskId(tskId) {
+    console.log("getImageForTaskId",tskId)
+    return new Promise((resolve, reject) => {
+      wx.request({
+        url: getApp().globalData.baseUrl + 'getImg/' + tskId, // 使用全局变量拼接完整的请求地址
+        data: {"task_id": tskId},
+        method: 'GET',
+        success: (res) => {
+          console.log("success", res)
+          resolve(res.data);
+        },
+        fail: (err) => {
+          console.log("fail", err)
+          reject(error);
+        }
+      });
+    });
+  },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
@@ -158,7 +210,7 @@ Page({
     });
   },
   //回画板
-  goToDraw(){
+  goToDraw() {
     wx.navigateTo({
       url: '/pages/dragonPage/modify',
     });
