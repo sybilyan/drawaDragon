@@ -54,17 +54,19 @@
              </view> -->
   <!-- 主页面-底部 <image src="../../image/1.svg"></image>-->
   <view class="toolbar-bottom" wx:if="{{page==='mainPage'}}">
-     <div wx:if="{{showText}}" class="loadingText">
+       <div wx:if="{{showText}}"  class="loadingText">
             <!-- 文本 -->
               <div style="height: 200px;">
+              <div class="text-content">
                 <swiper style="height: 200px;" indicator-dots="{{indicatorDots}}" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" circular="{{circular}}">
-                    <swiper-item style="margin-left: 28%;margin-top: -6%;"  wx:for="{{sentenceList}}" wx:key="{{index}}">
-                         <div class="text-content">{{item}}</div>
+                    <swiper-item style="margin-left: 24%;margin-top: -6%;"  wx:for="{{sentenceList}}" wx:key="{{index}}">
+                         <p >{{item}}</p>
                     </swiper-item>
                 </swiper>
+                   </div>
               </div>
          <!-- 进度条 -->
-         <progress  color="rgb(154, 16, 5)"  width="1 rpx"  style="width: 80%;margin-left: 10%;margin-top: -22%"  percent="{{progress}}" />
+         <progress  color="rgb(154, 16, 5)"  width="1 rpx"  style="width: 80%;margin-left: 9%;margin-top: 29%"  percent="{{progress}}" />
      </div>
 
     <view bindtap='toCropPage'><text class="icon-cutter"></text><text class="text">裁剪</text></view>
