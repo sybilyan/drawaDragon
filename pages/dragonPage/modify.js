@@ -7,6 +7,22 @@ Page({
    * 页面的初始数据
    */
   data: {
+    indicatorDots: false,
+    autoplay: true,
+    interval: 2000, // 轮播间隔时间，单位为毫秒
+    duration: 500, // 滑动动画时长，单位为毫秒
+    circular: true,
+    sentenceList: [
+      "龙龙制作中，请稍后...",
+      "新年心愿，有龙则灵",
+      "画个龙，drop个beat",
+      "龙之创造者，正在施展魔法",
+      "趴趴龙的诞生，需要点耐心",
+      "话说你的网是不是不太好啊",
+      "探索龙之奇境，稍后即将启程",
+      "为你打造独一无二的趴趴龙",
+      "过年回家被催婚催生催暴富了嘛",
+    ],
     progress:0,
     dynamicZIndex:1,
     showText:false,
