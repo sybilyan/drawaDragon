@@ -1,7 +1,7 @@
 <!--pages/dragonPage.wxml-->
 <view class="modify-page">
 
-  <view  animation="{{guideModalAnimation}}" class="guide-modal" style="z-index: {{dynamicZIndex}}" bindtap="stopGifPlaybackShow">
+  <view wx:if="{{showInitGif}}"  animation="{{guideModalAnimation}}" class="guide-modal" style="z-index: {{dynamicZIndex}}" bindtap="stopGifPlaybackShow">
   <image  class="gif-image" src="{{gifImagePath}}"></image>
 </view>
 

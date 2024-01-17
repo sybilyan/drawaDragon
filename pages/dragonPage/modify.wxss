@@ -35,8 +35,8 @@
 }
 .guide-modal {
   position: fixed;
-  margin-left: -55%;
-  margin-top: -140%;
+  margin-left: -54%;
+  margin-top: -108%;
   width: 70%;
   height: 60%;
   background-color: rgba(0, 0, 0, 0.5);  /* 半透明背景 */

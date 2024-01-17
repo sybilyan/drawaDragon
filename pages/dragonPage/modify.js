@@ -7,6 +7,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    showInitGif: false,
     indicatorDots: false,
     autoplay: true,
     interval: 2000, // 轮播间隔时间，单位为毫秒
@@ -77,8 +78,8 @@ Page({
   onLoad(options) {
 
      // 检查是否是第一次进入涂鸦界面
-  let isFirstTime = wx.getStorageSync('isFirstTime');
-  // let isFirstTime = wx.getStorageSync('isFirstTime1');
+  // let isFirstTime = wx.getStorageSync('isFirstTime');
+  let isFirstTime = wx.getStorageSync('isFirstTime1');
   if (!isFirstTime) {
     // 如果是第一次，显示引导提示框
     this.showGuideModal();
@@ -150,6 +151,9 @@ Page({
       showCancel: false,
       success: (res) => {
         if (res.confirm) {
+          this.setData({
+            showInitGif:true
+          })
           this.playGifAndMoveToBottomRight();
         }
       }
