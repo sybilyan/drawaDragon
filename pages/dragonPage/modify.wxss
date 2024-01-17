@@ -14,7 +14,7 @@
 
 .text-content {
   color: white;
-  font-size: 16px;
+  font-size: 28rpx;
   line-height: 50px;
   position: absolute;
   margin-top: 16%;
