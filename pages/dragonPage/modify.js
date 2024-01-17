@@ -78,8 +78,8 @@ Page({
   onLoad(options) {
 
      // 检查是否是第一次进入涂鸦界面
-  // let isFirstTime = wx.getStorageSync('isFirstTime');
-  let isFirstTime = wx.getStorageSync('isFirstTime1');
+   let isFirstTime = wx.getStorageSync('isFirstTime');
+  // let isFirstTime = wx.getStorageSync('isFirstTime1');
   if (!isFirstTime) {
     // 如果是第一次，显示引导提示框
     this.showGuideModal();
