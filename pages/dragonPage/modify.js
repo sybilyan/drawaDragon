@@ -450,7 +450,7 @@ playGifAndMoveToBottomRight: function() {
           wx.hideLoading();
 
           resolve();
-        }, 3000); // 3000毫秒即3秒
+        }, 8000); // 3000毫秒即3秒
       });
     };
 
