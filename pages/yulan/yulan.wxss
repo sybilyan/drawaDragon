@@ -26,12 +26,12 @@
 .btn {
   padding: 6rpx 20rpx;
   border: none;
-  border-radius: 31rpx;
-  border: 3rpx solid rgba(153, 15, 5, 1);
+  border-radius: 70rpx;
+  border: 5rpx solid rgba(153, 15, 5, 1);
   color: rgba(153, 15, 5, 1);
   background-color:rgb(254, 207, 189);
-  font-size:22rpx;
+  font-size:24rpx;
+  font-weight: bold;
   width:30%;
   margin-top: -8%;
-
 }

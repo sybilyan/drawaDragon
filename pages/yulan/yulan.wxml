@@ -2,7 +2,7 @@
 
 <view class="page-container" style="background-color:  rgb(254, 207, 189);">
   <view class="sectionTitle">
-    <text>您的龙龙制作完毕，祝您新年快乐</text>
+    <text style="font-size: 20px; font-weight: bold;">您的龙龙制作完毕，祝您新年快乐</text>
   </view>
 
   <view class="section">

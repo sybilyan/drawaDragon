@@ -27,7 +27,7 @@ Page({
     dynamicZIndex:1,
     showText:false,
     initImage: '',
-    gifImagePath: '../../image/a9c52c073ee44d5d9b343b529f224e1d.gif',
+    gifImagePath: '../../image/introduction.gif',
     gifshowFlag:false,
     isPlayingGifSmall:false,
     tempCanvasWidth:0,
@@ -629,6 +629,10 @@ playGifAndMoveToBottomRight: function() {
     }
     console.log("to  saveImgToPhone",new Date())
     let countdownSeconds = 3;
+    this.doodled=false
+    this.setData({
+      page: 'mainPage'
+    })
     // const timestamp = Date.now();
     // console.log('当前时间戳:', timestamp);
     // const timestampInSeconds = Math.floor(Date.now() / 1000);
