@@ -8,12 +8,12 @@
 .text-container {
   position: relative;
   display: inline-block;
-  padding-bottom:6%;
+  padding-bottom:5%;
   margin-left:32%
 }
 
 .text-content {
-  color: white;
+  color: #B36E68;
   font-size: 28rpx;
   line-height: 50px;
   position: absolute;
@@ -21,10 +21,10 @@
   margin-left: 6%;
   padding: 10px;
   width: 100%;
-  height: 16px;
+  height: 20px;
   max-width: 80%;
   border-radius: 20px;
-  border: 2px solid #FFFFFF;
+  border: 2px solid #B36E68;
 }
 
 .loadingText {

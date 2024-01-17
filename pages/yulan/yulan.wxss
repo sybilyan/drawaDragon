@@ -1,5 +1,4 @@
 /* pages/index/index.wxss */
-
 .page-container {
   display: flex;
   flex-direction: column;
@@ -7,23 +6,26 @@
 }
 .sectionTitle{
   padding: 20px;
-
   text-align: center;
-  margin-top:50%;
+  margin-top:30%;
 }
+
 .section {
   padding: 20px;
+  margin-top:-5%;
   color: #FFFFFF;
   text-align: center;
- background-color: rgb(254, 207, 189);
+  background-color: rgb(254, 207, 189);
 }
 
 .image {
+  height: 500rpx;
   width: 45%;
   margin: 2.5%;
 }
 
 .btn {
+  /* position: absolute; */
   padding: 6rpx 20rpx;
   border: none;
   border-radius: 70rpx;
@@ -33,5 +35,5 @@
   font-size:24rpx;
   font-weight: bold;
   width:30%;
-  margin-top: -8%;
+  margin-top: -2%;
 }
