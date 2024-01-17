@@ -20,7 +20,6 @@
 .image {
   width: 45%;
   margin: 2.5%;
-  height: 220rpx !important;
 }
 
 .btn {
