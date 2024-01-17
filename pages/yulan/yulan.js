@@ -23,7 +23,7 @@ Page({
       if (getImageResult.status==200){
         console.log("success")
           this.setData({
-            images: r2.picture_list
+            images: getImageResult.picture_list
           })
       }else {
         let that=this;
@@ -61,7 +61,7 @@ Page({
                             if (getImageResult.status == 200) {
                               console.log("success")
                               that.setData({
-                                images: r2.picture_list
+                                images: getImageResult.picture_list
                               })
                             } else {
                               wx.showLoading({
