@@ -46,7 +46,7 @@ Page({
               });
               wx.request({
                 url: app.globalData.baseUrl + "upload", // 使用全局变量拼接完整的请求地址
-                data: wx.getStorageSync("uploadParams"),
+                data: wx.getStorage("uploadParams"),
                 method: "POST",
                 header: {
                   "content-type": "application/json", // 根据实际情况设置请求头
