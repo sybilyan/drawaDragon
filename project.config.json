@@ -60,10 +60,10 @@
   "compileType": "miniprogram",
   "cloudfunctionTemplateRoot": "cloudfunctionTemplate/",
   "cloudfunctionRoot": "cloudfunctions/",
-  "appid": "wxcee1c8faaed6dbc2",
   "libVersion": "2.14.1",
   "packOptions": {
     "ignore": [],
     "include": []
-  }
+  },
+  "appid": "wxcee1c8faaed6dbc2"
 }

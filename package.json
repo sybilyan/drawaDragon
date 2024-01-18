@@ -12,5 +12,8 @@
   "dependencies": {
     "@vant/weapp": "^1.10.23",
     "vant-weapp": "^0.5.29"
+  },
+  "devDependencies": {
+    "@minapp/wx": "^2.2.1"
   }
 }
