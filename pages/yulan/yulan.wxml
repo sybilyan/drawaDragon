@@ -13,6 +13,6 @@
     <button class="btn" bindtap="onShare">立即分享</button>
   </view>
   <view class="share-container" wx:if="{{showShareTips}}" bind:tap="onShareTipsModalClick">
-    <image class="icon share" src="../../image/share.png" mode="aspectFit|aspectFill|widthFix"></image>
+    <image class="icon share" style="top: {{nativeActionPosition[1]}}px; left: {{nativeActionPosition[0]}}px;" src="../../image/share.png" mode="aspectFit|aspectFill|widthFix"></image>
   </view>
 </view>

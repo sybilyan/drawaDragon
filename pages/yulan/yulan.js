@@ -10,12 +10,19 @@ Page({
     waitTime: 0,
     taskId: "",
     showShareTips: false,
+    nativeActionPosition: [0, 0],
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
+    const { bottom, left } = wx.getMenuButtonBoundingClientRect();
+
+    this.setData({
+      nativeActionPosition: [left + 4, bottom + 16],
+    });
+
     console.log("options", options);
     let tskId = options.taskId;
     this.getImageForTaskId(tskId).then((getImageResult) => {
