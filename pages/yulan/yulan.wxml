@@ -1,7 +1,7 @@
 <!-- pages/index/index.wxml -->
 <view class="page-container" style="background-color:  rgb(254, 207, 189);">
   <view class="section-title">
-    <text style="font-size: 20px; font-weight: bold;">您的龙龙制作完毕，祝您新年快乐</text>
+    <text style="font-size: 20px; font-weight: bold;">您的趴趴龙制作完毕，祝您新年快乐</text>
   </view>
   <view class="section image-container">
     <block wx:for="{{images}}" wx:for-item="img">

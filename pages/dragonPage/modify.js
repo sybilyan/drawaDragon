@@ -84,11 +84,11 @@ Page({
    */
   onLoad(options) {
     // 检查是否是第一次进入涂鸦界面
-    let isFirstTime = wx.getStorageSync("isFirstTime1");
-    if (isFirstTime) {
+    let isNotFirstTime = wx.getStorageSync('isNotFirstTime');
+    if (!isNotFirstTime) {
       // 如果是第一次，显示引导提示框
       this.showGuideModal();
-      wx.setStorageSync("isFirstTime", true);
+      wx.setStorageSync("isNotFirstTime", true);
     } else {
       this.showHB();
     }
@@ -446,7 +446,7 @@ Page({
           wx.hideLoading();
 
           resolve();
-        }, 8000); // 3000毫秒即3秒
+        }, 18000); // 3000毫秒即3秒
       });
     };
 
@@ -699,19 +699,46 @@ function chooseImage(self) {
     count: 1,
     sizeType: ["original"], // 可以指定是原图还是压缩图，默认二者都有
     sourceType: ["album", "camera"], // 可以指定来源是相册还是相机，默认二者都有
+
     success: function (res) {
       //图片选择成功了，res就是选择的图片
-      var tempFilePaths = res.tempFilePaths;
-      console.log("chooseImage tempFilePaths:::" + tempFilePaths);
-      //选好了图片，
-      self.setData({
-        initImage: tempFilePaths[0],
-        imageNotChoosed: false,
-        tempImageSrc: tempFilePaths[0],
-        originImageSrc: tempFilePaths[0],
+      // 校验图片格式
+      var tempFilePaths_forcheck = res.tempFilePaths;
+      var tempFilePath_forcheck = tempFilePaths_forcheck[0];
+      wx.getImageInfo({
+        src: tempFilePath_forcheck,
+        success: function(imageInfo) {
+          var fileType = imageInfo.type; // 图片文件类型
+           // 判断文件类型是否为图片
+          if (fileType=== 'png' || fileType === 'jpg' || fileType === 'jpeg') {
+            // 是图片格式，继续处理上传逻辑
+            var tempFilePaths = res.tempFilePaths;
+            console.log("chooseImage tempFilePaths:::" + tempFilePaths);
+            //选好了图片，
+            self.setData({
+              initImage: tempFilePaths[0],
+              imageNotChoosed: false,
+              tempImageSrc: tempFilePaths[0],
+              originImageSrc: tempFilePaths[0],
+            });
+            //把选择好的图片，加载出来
+            loadImgOnImage(self);
+          } else {
+            // 非图片格式，给出提示或执行相应的处理
+            wx.showToast({
+              title: '请选择有效的图片文件',
+              icon: 'none'
+            });
+          }
+        },
+        fail: function() {
+          // 无法获取图片信息，处理失败情况
+          wx.showToast({
+            title: '无法获取图片信息',
+            icon: 'none'
+          });
+        }
       });
-      //把选择好的图片，加载出来
-      loadImgOnImage(self);
     },
     fail: function (res) {
       self.setData({

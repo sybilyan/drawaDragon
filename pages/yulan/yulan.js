@@ -18,7 +18,6 @@ Page({
    */
   onLoad(options) {
     const { bottom, left } = wx.getMenuButtonBoundingClientRect();
-
     this.setData({
       nativeActionPosition: [left + 4, bottom + 16],
     });
