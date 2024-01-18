@@ -227,7 +227,7 @@ Page({
       file_doodle: tuyaImage,
       file_img_doodle: finalImage,
     };
-    wx.setStorageSync("uploadParams", paramsJSON);
+    wx.setStorage("uploadParams", paramsJSON);
     console.log("test end  params ", paramsJSON);
     let that = this;
     // 调用 post 请求
