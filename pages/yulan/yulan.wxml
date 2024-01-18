@@ -1,18 +1,18 @@
 <!-- pages/index/index.wxml -->
-
 <view class="page-container" style="background-color:  rgb(254, 207, 189);">
-  <view class="sectionTitle">
+  <view class="section-title">
     <text style="font-size: 20px; font-weight: bold;">您的龙龙制作完毕，祝您新年快乐</text>
   </view>
-
-  <view class="section">
+  <view class="section image-container">
     <block wx:for="{{images}}" wx:for-item="img">
-         <image src="{{img}}" mode="widthFix" class="image"  bindtap="previewImage" bindlongtap="saveImage" data-src="{{img}}" />
-       </block>
+      <image src="{{img}}" mode="widthFix" class="image bordered" bindtap="previewImage" bindlongtap="saveImage" data-src="{{img}}" />
+    </block>
   </view>
-
-  <view class="section" style="display: flex; justify-content: space-between; align-items: center; background-color: rgb(254, 207, 189);">
+  <view class="section action-container">
     <button class="btn" bindtap="goToDraw">返回重新制作</button>
     <button class="btn" bindtap="onShare">立即分享</button>
+  </view>
+  <view class="share-container" wx:if="{{showShareTips}}" bind:tap="onShareTipsModalClick">
+    <image class="icon share" src="../../image/share.png" mode="aspectFit|aspectFill|widthFix"></image>
   </view>
 </view>

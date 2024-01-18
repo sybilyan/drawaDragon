@@ -1,25 +1,20 @@
-<!--pages/dragonPage.wxml-->
+<!-- pages/dragonPage.wxml -->
 <view class="modify-page">
-
-  <view wx:if="{{showInitGif}}"  animation="{{guideModalAnimation}}" class="guide-modal" style="z-index: {{dynamicZIndex}}" bindtap="stopGifPlaybackShow">
-  <image  class="gif-image" src="{{gifImagePath}}"></image>
-</view>
-
-
-
-
-
-   <!-- 隐藏canvas 保存图片用 -->
+  <view wx:if="{{showInitGif}}" class="guide-modal" style="z-index: {{dynamicZIndex}}" bindtap="stopGifPlaybackShow">
+    <image class="gif-image" src="{{gifImagePath}}"></image>
+  </view>
+  <!-- 隐藏canvas 保存图片用 -->
   <canvas canvas-id="tempCanvas" disable-scroll="true" style="width:{{tempCanvasWidth}}px; height:{{tempCanvasHeight}}px; position:absolute;left:-999999px"></canvas>
- <canvas canvas-id="resultCanvas" disable-scroll="true" style="width:{{tempCanvasWidth}}px; height:{{tempCanvasHeight}}px; position:absolute;left:-999998px"></canvas>
+  <canvas canvas-id="resultCanvas" disable-scroll="true" style="width:{{tempCanvasWidth}}px; height:{{tempCanvasHeight}}px; position:absolute;left:-999998px"></canvas>
   <!-- 主页面 -->
   <view class="imageView" wx:if="{{page==='mainPage'}}" style="height:{{imgViewHeight}}px">
-    <view class="noImageBox" wx:if="{{imageNotChoosed}}" bindtap='chooseOneImage'><text>点击选择图片</text></view>
+    <view class="noImageBox" wx:if="{{imageNotChoosed}}" bindtap='chooseOneImage'>
+      <text>点击选择图片</text>
+    </view>
     <!-- <view class="saveButton" wx:if="{{!imageNotChoosed}}" bindtap='saveImgToPhone'><text class="icon-save"></text></view> -->
     <image src="{{tempImageSrc}}" style="width:{{imgWidth}}px;height:{{imgHeight}}px;top:{{imgTop}}px;left:{{imgLeft}}px" disable-scroll="true"></image>
-
   </view>
-   <!-- 裁剪页面 -->
+  <!-- 裁剪页面 -->
   <view class="imageView" wx:if="{{page==='cropPage'}}" style="height:{{imgViewHeight}}px">
     <image src="{{tempImageSrc}}" style="width:{{imgWidth}}px;height:{{imgHeight}}px;top:{{imgTop}}px;left:{{imgLeft}}px" disable-scroll="true" bindtouchstart="uploadScaleStart" bindtouchmove="uploadScaleMove" bindtouchend="uploadScaleEnd"></image>
     <view wx:if="{{isCroper}}" class="cropper-wraper">
@@ -45,57 +40,89 @@
   </view> -->
   <!-- 涂鸦页面 -->
   <view class="imageView" wx:if="{{page==='doodlePage'}}" style="height:{{imgViewHeight}}px">
-     <image src="{{tempImageSrc}}" style="width:{{imgWidth}}px;height:{{imgHeight}}px;top:{{imgTop}}px;left:{{imgLeft}}px" disable-scroll="true"></image>
+    <image src="{{tempImageSrc}}" style="width:{{imgWidth}}px;height:{{imgHeight}}px;top:{{imgTop}}px;left:{{imgLeft}}px" disable-scroll="true"></image>
     <canvas class="myCanvas" canvas-id="myCanvas" disable-scroll="true" bindtouchstart="doodleStart" bindtouchmove="doodleMove" style="width:750rpx; height:{{canvasHeight}}px;"></canvas>
   </view>
-
- <!--  <view  class="zy-btn" bindtap="showGifPlay">
+  <!-- <view  class="zy-btn" bindtap="showGifPlay">
                 <button  style="   background-color: rgb(196, 196, 196); color:rgb(130,130,130) ;font-size:24rpx ; border: none; border-radius: 38px;">涂鸦引导</button>
              </view> -->
-  <!-- 主页面-底部 <image src="../../image/1.svg"></image>-->
+  <!-- 主页面-底部 <image src="../../image/1.svg"></image> -->
   <view class="toolbar-bottom" wx:if="{{page==='mainPage'}}">
-       <div wx:if="{{showText}}"  class="loadingText">
-            <!-- 文本 -->
-              <div style="height: 200px;">
-              <div class="text-content">
-                <swiper style="height: 200px;" indicator-dots="{{indicatorDots}}" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" circular="{{circular}}">
-                    <swiper-item style="margin-left: 24%;margin-top: -6%;"  wx:for="{{sentenceList}}" wx:key="{{index}}">
-                         <p >{{item}}</p>
-                    </swiper-item>
-                </swiper>
-                   </div>
-              </div>
-         <!-- 进度条 -->
-         <progress  color="rgb(154, 16, 5)"  width="1 rpx"  style="width: 80%;margin-left: 9%;margin-top: 29%"  percent="{{progress}}" />
-     </div>
-
-    <view bindtap='toCropPage'><text class="icon-cutter"></text><text class="text">裁剪</text></view>
-    <view bindtap='toUploadPage'><image class="icon-text" src="../../image/dragon-zodiac.svg"></image><text class="text">我画好了</text></view>
-    <view bindtap='toDoodlePage'><text class="icon-pen"></text><text class="text">涂鸦</text></view>
+    <div wx:if="{{showText}}" class="loadingText">
+      <!-- 文本 -->
+      <div style="height: 200px;">
+        <div class="text-content">
+          <swiper style="height: 200px;" indicator-dots="{{indicatorDots}}" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" circular="{{circular}}">
+            <swiper-item style="margin-left: 24%;margin-top: -6%;" wx:for="{{sentenceList}}" wx:key="{{index}}">
+              <p>{{item}}</p>
+            </swiper-item>
+          </swiper>
+        </div>
+      </div>
+      <!-- 进度条 -->
+      <progress color="rgb(154, 16, 5)" width="1 rpx" style="width: 80%;margin-left: 9%;margin-top: 29%" percent="{{progress}}" />
+    </div>
+    <view bindtap='toCropPage'>
+      <text class="icon-cutter"></text>
+      <text class="text">裁剪</text>
+    </view>
+    <view bindtap='toUploadPage'>
+      <image class="icon-text" src="../../image/dragon-zodiac.svg"></image>
+      <text class="text">我画好了</text>
+    </view>
+    <view bindtap='toDoodlePage'>
+      <text class="icon-pen"></text>
+      <text class="text">涂鸦</text>
+    </view>
   </view>
   <!-- 裁剪页面-底部 -->
   <view class="toolbar-bottom" wx:if="{{page==='cropPage'}}">
-    <view bindtap='toMainPage'><text class="icon-back"></text><text class="text">主菜单</text></view>
-    <view bindtap='openCroper'><text class="icon-cutbox"></text><text class="text">裁剪框</text></view>
+    <view bindtap='toMainPage'>
+      <text class="icon-back"></text>
+      <text class="text">主菜单</text>
+    </view>
+    <view bindtap='openCroper'>
+      <text class="icon-cutbox"></text>
+      <text class="text">裁剪框</text>
+    </view>
     <!-- <view bindtap='bestShow'><text class="icon-bestshow"></text><text class="text">最佳显示</text></view> -->
   </view>
   <!-- 涂鸦页面-底部 -->
   <view wx:if="{{page==='doodlePage'}}">
     <view wx:if="{{isChooseWidth}}" class="toolbar-top toolbar-width">
-      <view class="slider-box"><slider bindchange="widthSliderChange" min="10" max="30" value="10" show-value></slider></view>
+      <view class="slider-box">
+        <slider bindchange="widthSliderChange" min="10" max="30" value="10" show-value></slider>
+      </view>
     </view>
     <view wx:if="{{isChooseColor}}" class="toolbar-top">
-      <view class="color-box"><view wx:for="{{allColor}}" wx:key="key" class="color-point" data-selected="{{item}}"style="background:{{item}}" bindtap='lineColorChange'></view>
-      <view><p style="font-size: 24rpx; color: rgb(87, 87, 87);">选择一个你喜欢的龙的颜色，注意多次绘制只可选择同一颜色</p></view>
+      <view class="color-box">
+        <view wx:for="{{allColor}}" wx:key="key" class="color-point" data-selected="{{item}}" style="background:{{item}}" bindtap='lineColorChange'></view>
+        <view>
+          <p style="font-size: 24rpx; color: rgb(87, 87, 87);">选择一个你喜欢的龙的颜色，注意多次绘制只可选择同一颜色</p>
+        </view>
       </view>
-
     </view>
     <view class="toolbar-bottom">
-      <view bindtap='doodleToMainPage'><text class="icon-back"></text><text class="text">主菜单</text></view>
-      <view bindtap='chooseLineWidth'><text class="icon-linewidth"></text><text class="text">粗细</text></view>
-      <view bindtap='chooseLineColor'><text class="icon-color"></text><text class="text">颜色</text></view>
-      <view class="eraser-box" bindtap='chooseEraser' style="background: {{isEraser?'rgba(255,255,255,0.5)':'transparent'}};"><text class="icon-eraser"></text><text class="text">橡皮檫</text></view>
-      <view class="clear-box" bindtap='chooseClear'><text class="icon-clear"></text><text class="text">清除</text></view>
+      <view bindtap='doodleToMainPage'>
+        <text class="icon-back"></text>
+        <text class="text">主菜单</text>
+      </view>
+      <view bindtap='chooseLineWidth'>
+        <text class="icon-linewidth"></text>
+        <text class="text">粗细</text>
+      </view>
+      <view bindtap='chooseLineColor'>
+        <text class="icon-color"></text>
+        <text class="text">颜色</text>
+      </view>
+      <view class="eraser-box" bindtap='chooseEraser' style="background: {{isEraser?'rgba(255,255,255,0.5)':'transparent'}};">
+        <text class="icon-eraser"></text>
+        <text class="text">橡皮檫</text>
+      </view>
+      <view class="clear-box" bindtap='chooseClear'>
+        <text class="icon-clear"></text>
+        <text class="text">清除</text>
+      </view>
     </view>
   </view>
   <!-- 添加文字页面-底部
