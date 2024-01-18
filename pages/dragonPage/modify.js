@@ -241,24 +241,33 @@ Page({
       success: function (res) {
         console.log("tpost  res ", res);
         if (res.statusCode === 200) {
-          // this.setData({
-          //   progress:100
-          // });
-          let taskId = res.data.content.task_id;
-          that.getImageForTaskId(taskId).then((getImageResult) => {
-            console.log("getImageResult", getImageResult);
-            if (getImageResult.status == 201 && getImageResult.wait_time > 0) {
-              console.log("getImageResult.wait_time", getImageResult.wait_time);
+          let taskId=res.data.content.task_id;
+          let waitTime=0;
+          if (res.data.content.wait_time>0){
+            waitTime=res.data.content.wait_time;
+          }
+          setTimeout(() => {
 
-              setTimeout(() => {
-                that.setData({
-                  progress: 100,
-                });
-                goToPageYulan(taskId);
-              }, getImageResult.wait_time * 1000);
-              // setTimeout({},)
-            }
-          });
+            that.getImageForTaskId(taskId).then((getImageResult)=>{
+              console.log("getImageResult",getImageResult)
+              if (getImageResult.status==201&&getImageResult.wait_time>0){
+                console.log("getImageResult.wait_time",getImageResult.wait_time)
+
+                setTimeout(() => {
+                  that.setData({
+                    progress: 100,
+                  });
+                  goToPageYulan(taskId);
+                },getImageResult.wait_time*1000)
+                // setTimeout({},)
+              }else{
+                 that.setData({
+                    progress: 100,
+                  });
+                  goToPageYulan(taskId);
+              }
+            });
+          },waitTime*1000)
         } else {
           console.log("tpost error  ", res);
         }
