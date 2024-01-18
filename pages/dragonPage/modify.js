@@ -252,7 +252,9 @@ Page({
               console.log("getImageResult",getImageResult)
               if (getImageResult.status==201&&getImageResult.wait_time>0){
                 console.log("getImageResult.wait_time",getImageResult.wait_time)
-
+                 that.setData({
+                    progress: 0,
+                  });
                 setTimeout(() => {
                   that.setData({
                     progress: 100,
