@@ -84,7 +84,7 @@ Page({
    */
   onLoad(options) {
     // 检查是否是第一次进入涂鸦界面
-    let isNotFirstTime = wx.getStorageSync('isNotFirstTime');
+    let isNotFirstTime = wx.getStorageSync("isNotFirstTime");
     if (!isNotFirstTime) {
       // 如果是第一次，显示引导提示框
       this.showGuideModal();
@@ -185,19 +185,11 @@ Page({
   },
   //保存照片
   saveImgToPhone() {
-    console.log("saveImgToPhone");
-
     this.saveImageInfo2Server();
   },
   // 请求保存
   async saveImageInfo2Server() {
-    console.log(
-      "this.data.initImage resultImagePath ,tempImageSrc",
-      this.data.initImage,
-      this.data.resultImagePath,
-      this.data.tempImageSrc
-    );
-    console.log("this.data.lastLineColor", this.data.lastLineColor);
+    console.log("[running] start save image info to server");
 
     //颜色
     let lasteColor = this.data.colorMap[this.data.lastLineColor];
@@ -205,20 +197,21 @@ Page({
     let initImage = await canvasUtils.convertImagePathToBase64(
       this.data.initImage
     );
-    console.log("test end  params  1", initImage);
-    //    //所有涂鸦合并图片
+    console.log("[success] get initial image success");
+
+    //所有涂鸦合并图片
     let tuyaImage = await canvasUtils.convertImagePathToBase64(
       this.data.resultImagePath
     );
-    console.log("test end  params  3", tuyaImage);
+    console.log("[success] merge graffiti");
+
     // 涂鸦+原始图片
     let finalImage = await canvasUtils.convertImagePathToBase64(
       this.data.tempImageSrc
     );
-    // console.log("test end  params  1 ",this.data.imgWidth)
-    // console.log("test end  params  2",this.data.imgHeight)
 
-    console.log("test end  params  4", finalImage);
+    console.log("[success] merge graffiti and initial image");
+
     let paramsJSON = {
       width: this.data.imgWidth,
       height: this.data.imgHeight,
@@ -241,35 +234,40 @@ Page({
       success: function (res) {
         console.log("tpost  res ", res);
         if (res.statusCode === 200) {
-          let taskId=res.data.content.task_id;
-          let waitTime=0;
-          if (res.data.content.wait_time>0){
-            waitTime=res.data.content.wait_time;
+          let taskId = res.data.content.task_id;
+          let waitTime = 0;
+          if (res.data.content.wait_time > 0) {
+            waitTime = res.data.content.wait_time;
           }
           setTimeout(() => {
-
-            that.getImageForTaskId(taskId).then((getImageResult)=>{
-              console.log("getImageResult",getImageResult)
-              if (getImageResult.status==201&&getImageResult.wait_time>0){
-                console.log("getImageResult.wait_time",getImageResult.wait_time)
-                 that.setData({
-                    progress: 0,
-                  });
+            that.getImageForTaskId(taskId).then((getImageResult) => {
+              console.log("getImageResult", getImageResult);
+              if (
+                getImageResult.status == 201 &&
+                getImageResult.wait_time > 0
+              ) {
+                console.log(
+                  "getImageResult.wait_time",
+                  getImageResult.wait_time
+                );
+                that.setData({
+                  progress: 0,
+                });
                 setTimeout(() => {
                   that.setData({
                     progress: 100,
                   });
                   goToPageYulan(taskId);
-                },getImageResult.wait_time*1000)
+                }, getImageResult.wait_time * 1000);
                 // setTimeout({},)
-              }else{
-                 that.setData({
-                    progress: 100,
-                  });
-                  goToPageYulan(taskId);
+              } else {
+                that.setData({
+                  progress: 100,
+                });
+                goToPageYulan(taskId);
               }
             });
-          },waitTime*1000)
+          }, waitTime * 1000);
         } else {
           console.log("tpost error  ", res);
         }
@@ -448,6 +446,7 @@ Page({
         console.log("加载完成 progress");
       }
     }, 1000);
+
     // 封装成 Promise
     const hideLoading = () => {
       return new Promise((resolve) => {
@@ -466,7 +465,7 @@ Page({
       // 在这里执行加载完成后的操作，例如显示其他内容等
       console.log("加载完成 this.saveImgToPhone()");
       // 调用其他函数或执行其他逻辑
-      this.saveImgToPhone();
+      this.saveImageInfo2Server();
 
       this.setData({
         page: "mainPage",
@@ -718,10 +717,10 @@ function chooseImage(self) {
       var tempFilePath_forcheck = tempFilePaths_forcheck[0];
       wx.getImageInfo({
         src: tempFilePath_forcheck,
-        success: function(imageInfo) {
+        success: function (imageInfo) {
           var fileType = imageInfo.type; // 图片文件类型
-           // 判断文件类型是否为图片
-          if (fileType=== 'png' || fileType === 'jpg' || fileType === 'jpeg') {
+          // 判断文件类型是否为图片
+          if (fileType === "png" || fileType === "jpg" || fileType === "jpeg") {
             // 是图片格式，继续处理上传逻辑
             var tempFilePaths = res.tempFilePaths;
             console.log("chooseImage tempFilePaths:::" + tempFilePaths);
@@ -737,18 +736,18 @@ function chooseImage(self) {
           } else {
             // 非图片格式，给出提示或执行相应的处理
             wx.showToast({
-              title: '请选择有效的图片文件',
-              icon: 'none'
+              title: "请选择有效的图片文件",
+              icon: "none",
             });
           }
         },
-        fail: function() {
+        fail: function () {
           // 无法获取图片信息，处理失败情况
           wx.showToast({
-            title: '无法获取图片信息',
-            icon: 'none'
+            title: "无法获取图片信息",
+            icon: "none",
           });
-        }
+        },
       });
     },
     fail: function (res) {
