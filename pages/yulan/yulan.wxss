@@ -22,7 +22,6 @@
 .image-container {
   display: flex;
   flex-flow: row wrap;
-  overflow: hidden;
 }
 
 

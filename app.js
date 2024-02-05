@@ -1,7 +1,7 @@
 // app.js
 App({
   globalData: {
-    baseUrl: "http://dragon.aurobitai.com/dragon/",
+    baseUrl: "https://dragon.aurobitai.com/dragon/",
     longShotImages: "",
     longShotWord: "",
     longImageUse: true,

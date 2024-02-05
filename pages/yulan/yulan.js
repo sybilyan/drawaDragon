@@ -40,69 +40,28 @@ Page({
           showCancel: false,
           success: (ts) => {
             if (ts.confirm) {
-              wx.showLoading({
-                title: "上传中",
-                mask: true,
-              });
-              wx.request({
-                url: app.globalData.baseUrl + "upload", // 使用全局变量拼接完整的请求地址
-                data: wx.getStorage("uploadParams"),
-                method: "POST",
-                header: {
-                  "content-type": "application/json", // 根据实际情况设置请求头
-                },
-                success: function (res) {
-                  console.log("tpost second  res ", res);
-                  if (res.statusCode === 200) {
-                    let taskId = res.data.content.task_id;
-                    that.getImageForTaskId(taskId).then((getImageResult) => {
-                      console.log("getImageResult second", getImageResult);
-                      if (
-                        getImageResult.status == 201 &&
-                        getImageResult.wait_time > 0
-                      ) {
-                        console.log(
-                          "getImageResult.wait_time second",
-                          getImageResult.wait_time
-                        );
-                        setTimeout(() => {
-                          that
-                            .getImageForTaskId(tskId)
-                            .then((getImageResult) => {
-                              console.log("getImageResult", getImageResult);
-                              wx.hideLoading();
-                              if (getImageResult.status == 200) {
-                                console.log("success");
-                                that.setData({
-                                  images: getImageResult.picture_list,
-                                });
-                              } else {
-                                wx.showLoading({
-                                  title: "仍旧处于混乱中 稍后重试",
-                                  mask: true,
-                                });
-                                setTimeout(() => {
-                                  wx.hideLoading();
-                                }, 2000);
-                              }
-                            });
-                        }, getImageResult.wait_time * 1000);
-                        // setTimeout({},)
-                      }
-                    });
-                  } else {
-                    console.log("tpost error  ", res);
-                  }
-                },
-                fail: function (err) {
-                  console.log("tpost fail  ", err);
-                },
-              });
+              wx.navigateTo({
+                url: '/pages/dragonPage/modify',
+              })
             }
           },
         });
       }
     });
+
+    wx.enableAlertBeforeUnload({
+      message: "您确定要重新开启唤龙术么?",
+      success: function (res) {
+        if (res.confirm) {
+          wx.navigateTo({
+            url: "/pages/dragonPage/modify",
+          });
+        }
+      },
+      fail: function (errMsg) {
+      },
+    });
+
   },
 
   getImageForTaskId(tskId) {
@@ -141,6 +100,7 @@ Page({
   /**
    * 生命周期函数--监听页面卸载
    */
+  
   onUnload() {},
 
   /**
@@ -158,9 +118,9 @@ Page({
    */
   onShareAppMessage() {
     return {
-      title: "绘画",
+      title: "快来与我一起召唤龙年神兽吧！",
       path: "pages/dragonPage/modify",
-      imageUrl: "../../image/todo4-preview.png", // 分享图片的 URL
+      // imageUrl: "../../image/todo4-preview.png", // 分享图片的 URL
     };
   },
 
@@ -229,7 +189,7 @@ Page({
   goToDraw() {
     wx.showModal({
       title: "提示",
-      content: "你确定要离开这个页面吗?",
+      content: "您确定要重新开启唤龙术么?",
       success: function (res) {
         if (res.confirm) {
           wx.navigateTo({

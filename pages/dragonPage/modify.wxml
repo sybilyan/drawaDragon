@@ -1,18 +1,20 @@
 <!-- pages/dragonPage.wxml -->
 <view class="modify-page">
-  <view wx:if="{{showInitGif}}" class="guide-modal" style="z-index: {{dynamicZIndex}}" bindtap="stopGifPlaybackShow">
+  <view wx:if="{{showInitGif||clickGuide}}" class="guide-modal" style="z-index: {{dynamicZIndex}}" bindtap="stopGifPlaybackShow">
     <image class="gif-image" src="{{gifImagePath}}"></image>
   </view>
   <!-- 隐藏canvas 保存图片用 -->
   <canvas canvas-id="tempCanvas" disable-scroll="true" style="width:{{tempCanvasWidth}}px; height:{{tempCanvasHeight}}px; position:absolute;left:-999999px"></canvas>
+  <canvas canvas-id="initImgCanvas" disable-scroll="true" style="width:{{tempCanvasWidth}}px; height:{{tempCanvasHeight}}px; position:absolute;left:-999999px"></canvas>
   <canvas canvas-id="resultCanvas" disable-scroll="true" style="width:{{tempCanvasWidth}}px; height:{{tempCanvasHeight}}px; position:absolute;left:-999998px"></canvas>
   <!-- 主页面 -->
   <view class="imageView" wx:if="{{page==='mainPage'}}" style="height:{{imgViewHeight}}px">
-    <view class="noImageBox" wx:if="{{imageNotChoosed}}" bindtap='chooseOneImage'>
+    <view class="noImageBox" wx:if="{{tempImageSrc == ''}}" bindtap='chooseOneImage'>
       <text>点击选择图片</text>
     </view>
     <!-- <view class="saveButton" wx:if="{{!imageNotChoosed}}" bindtap='saveImgToPhone'><text class="icon-save"></text></view> -->
     <image src="{{tempImageSrc}}" style="width:{{imgWidth}}px;height:{{imgHeight}}px;top:{{imgTop}}px;left:{{imgLeft}}px" disable-scroll="true"></image>
+    <button wx:if="{{tempImageSrc != ''}}"  class="choose-btn" bindtap="chooseOneImage">重新选择</button>
   </view>
   <!-- 裁剪页面 -->
   <view class="imageView" wx:if="{{page==='cropPage'}}" style="height:{{imgViewHeight}}px">
@@ -56,18 +58,23 @@
       <!-- 进度条 -->
       <progress color="rgb(154, 16, 5)" width="1 rpx" style="width: 80%;margin-left: 9%;margin-top: 29%" percent="{{progress}}" />
     </div>
+    <view bindtap='showGifPlay'>
+      <image class="icon-intro" src="../../image/tips.svg"></image>
+      <text class="text">引导手册</text>
+    </view>
     <view bindtap='toCropPage'>
       <text class="icon-cutter"></text>
       <text class="text">裁剪</text>
-    </view>
-    <view bindtap='toUploadPage'>
-      <image class="icon-text" src="../../image/dragon-zodiac.svg"></image>
-      <text class="text">我画好了</text>
     </view>
     <view bindtap='toDoodlePage'>
       <text class="icon-pen"></text>
       <text class="text">涂鸦</text>
     </view>
+    <view bindtap='toUploadPage'>
+      <image class="icon-dragon" src="../../image/dragon-zodiac.svg"></image>
+      <text class="text">立即唤龙</text>
+    </view>
+
   </view>
   <!-- 裁剪页面-底部 -->
   <view class="toolbar-bottom" wx:if="{{page==='cropPage'}}">
@@ -84,7 +91,7 @@
   <view wx:if="{{page==='doodlePage'}}">
     <view wx:if="{{isChooseWidth}}" class="toolbar-top toolbar-width">
       <view class="slider-box">
-        <slider bindchange="widthSliderChange" min="10" max="30" value="10" show-value></slider>
+        <slider bindchange="widthSliderChange" min="10" max="30" value="{{lineValue}}" show-value></slider>
       </view>
     </view>
     <view wx:if="{{isChooseColor}}" class="toolbar-top">
@@ -98,7 +105,7 @@
     <view class="toolbar-bottom">
       <view bindtap='doodleToMainPage'>
         <text class="icon-back"></text>
-        <text class="text">主菜单</text>
+        <text class="text">画好了</text>
       </view>
       <view bindtap='chooseLineWidth'>
         <text class="icon-linewidth"></text>

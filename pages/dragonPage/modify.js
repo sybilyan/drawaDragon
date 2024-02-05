@@ -30,13 +30,11 @@ Page({
     initImage: "",
     gifImagePath: "../../image/introduction.gif",
     gifshowFlag: false,
-    isPlayingGifSmall: false,
     tempCanvasWidth: 0,
     tempCanvasHeight: 0,
     imgViewHeight: 0,
     page: "mainPage",
-    imageNotChoosed: true,
-    resultImage: "",
+    resultImage: "", //涂鸦合并图
     minScale: 0.5,
     maxScale: 2.5,
     doodleImageSrc: "",
@@ -68,6 +66,7 @@ Page({
       "#FF0000",
     ],
     lastLineColor: "",
+    lineValue:20,
     colorMap: {
       "#000000": "black",
       "#FFFFFF": "white",
@@ -84,7 +83,7 @@ Page({
    */
   onLoad(options) {
     // 检查是否是第一次进入涂鸦界面
-    let isNotFirstTime = wx.getStorageSync("isNotFirstTime");
+    let isNotFirstTime = wx.getStorageSync('isNotFirstTime');
     if (!isNotFirstTime) {
       // 如果是第一次，显示引导提示框
       this.showGuideModal();
@@ -144,7 +143,7 @@ Page({
       title: "欢迎使用画个龙",
       // content: '点击任意区域查看引导 GIF，再次进入将不再弹出。',
       content:
-        "接下来将会有一段引导，指引你如何快速盘龙。点击任意区域可缩小哦~",
+        '接下来的引导会教你快速盘龙。\r\n 点击关闭后可在底部重新找到哦~', //开发工具中不换行不显示，可能是BUG
       showCancel: false,
       success: (res) => {
         if (res.confirm) {
@@ -158,7 +157,7 @@ Page({
   showGifPlay(e) {
     console.log("showGifPlay");
     this.setData({
-      isPlayingGif: true,
+      clickGuide: true,
       dynamicZIndex: 1,
     });
     // 优化冒泡
@@ -167,51 +166,55 @@ Page({
   // 用户点击  结束播放
   stopGifPlaybackShow() {
     this.setData({
-      isPlayingGif: false,
+      clickGuide: false,
       dynamicZIndex: 0,
     });
-    this.showHB();
+    if(this.data.initImage===''){
+      this.showHB();
+    }
   },
-  // 用户点击  结束播放
-  // stopGifPlayback(){
-  //       this.setData({
-  //         isPlayingGifSmall: false,
-  //     });
-  //     this.showHB();
-  // },
+
   //展示图片
   bestShow() {
     loadImgOnImage(this);
   },
-  //保存照片
-  saveImgToPhone() {
-    this.saveImageInfo2Server();
-  },
+
   // 请求保存
   async saveImageInfo2Server() {
     console.log("[running] start save image info to server");
+    console.log(
+      "this.data.initImage resultImagePath ,tempImageSrc",
+      this.data.initImage,
+      this.data.resultImagePath,
+      this.data.tempImageSrc
+    );
+    console.log("this.data.lastLineColor", this.data.lastLineColor);
 
     //颜色
     let lasteColor = this.data.colorMap[this.data.lastLineColor];
+    if (lasteColor==undefined){
+      lasteColor="black";
+    }
     //初始图片
     let initImage = await canvasUtils.convertImagePathToBase64(
       this.data.initImage
     );
     console.log("[success] get initial image success");
-
-    //所有涂鸦合并图片
+    // console.log("test end  params  1", initImage);
+    //    //所有涂鸦合并图片
     let tuyaImage = await canvasUtils.convertImagePathToBase64(
       this.data.resultImagePath
     );
     console.log("[success] merge graffiti");
-
+    // console.log("test end  params  2", tuyaImage);
     // 涂鸦+原始图片
     let finalImage = await canvasUtils.convertImagePathToBase64(
       this.data.tempImageSrc
     );
-
     console.log("[success] merge graffiti and initial image");
-
+    // console.log("test end  params  1 ",this.data.imgWidth)
+    // console.log("test end  params  2",this.data.imgHeight)
+    // console.log("test end  params  3", finalImage);
     let paramsJSON = {
       width: this.data.imgWidth,
       height: this.data.imgHeight,
@@ -220,7 +223,7 @@ Page({
       file_doodle: tuyaImage,
       file_img_doodle: finalImage,
     };
-    wx.setStorage("uploadParams", paramsJSON);
+    //wx.setStorage("uploadParams", paramsJSON);
     console.log("test end  params ", paramsJSON);
     let that = this;
     // 调用 post 请求
@@ -234,40 +237,35 @@ Page({
       success: function (res) {
         console.log("tpost  res ", res);
         if (res.statusCode === 200) {
-          let taskId = res.data.content.task_id;
-          let waitTime = 0;
-          if (res.data.content.wait_time > 0) {
-            waitTime = res.data.content.wait_time;
+          let taskId=res.data.content.task_id;
+          let waitTime=0;
+          if (res.data.content.wait_time>0){
+            waitTime=res.data.content.wait_time;
           }
           setTimeout(() => {
-            that.getImageForTaskId(taskId).then((getImageResult) => {
-              console.log("getImageResult", getImageResult);
-              if (
-                getImageResult.status == 201 &&
-                getImageResult.wait_time > 0
-              ) {
-                console.log(
-                  "getImageResult.wait_time",
-                  getImageResult.wait_time
-                );
-                that.setData({
-                  progress: 0,
-                });
+
+            that.getImageForTaskId(taskId).then((getImageResult)=>{
+              console.log("getImageResult",getImageResult)
+              if (getImageResult.status==201&&getImageResult.wait_time>0){
+                console.log("getImageResult.wait_time",getImageResult.wait_time)
+                 that.setData({
+                    progress: 0,
+                  });
                 setTimeout(() => {
                   that.setData({
                     progress: 100,
                   });
                   goToPageYulan(taskId);
-                }, getImageResult.wait_time * 1000);
+                },getImageResult.wait_time*1000)
                 // setTimeout({},)
-              } else {
-                that.setData({
-                  progress: 100,
-                });
-                goToPageYulan(taskId);
+              }else{
+                 that.setData({
+                    progress: 100,
+                  });
+                  goToPageYulan(taskId);
               }
             });
-          }, waitTime * 1000);
+          },waitTime*1000)
         } else {
           console.log("tpost error  ", res);
         }
@@ -406,6 +404,8 @@ Page({
   },
   //裁剪图片
   toCropPage() {
+    this.showCustomerToast("功能暂不可用，敬请期待", 2000);
+    return;
     var self = this;
     loadImgOnImage(self);
     self.setData({
@@ -428,7 +428,7 @@ Page({
     this.setData({
       showText: true,
     });
-    // 使用定时器模拟每500毫秒自增一次progress
+    // 使用定时器模拟每1000毫秒自增一次progress
     const intervalId = setInterval(() => {
       if (this.data.progress == 96) {
         // console.log("this.data.progress",this.data.progress)
@@ -437,7 +437,7 @@ Page({
         });
       } else if (this.data.progress < 100) {
         this.setData({
-          progress: this.data.progress + 4,
+          progress: this.data.progress + 3,
         });
       } else {
         // 当progress达到100时，清除定时器
@@ -446,7 +446,7 @@ Page({
         console.log("加载完成 progress");
       }
     }, 1000);
-
+    let that_=this;
     // 封装成 Promise
     const hideLoading = () => {
       return new Promise((resolve) => {
@@ -454,9 +454,24 @@ Page({
         setTimeout(function () {
           // 隐藏加载提示
           wx.hideLoading();
-
+          // console.log("that_.data.resultImagePath",that_.data.resultImagePath)
+          if (that_.data.resultImagePath ==undefined){
+            wx.showModal({
+              title: "涂鸦失败",
+              content:
+                "您召唤的龙气飘走了，请再来一次",
+              showCancel: false,
+              success: (res) => {
+                if (res.confirm) {
+                  wx.navigateTo({
+                    url: '/pages/dragonPage/modify',
+                  })
+                }
+              },
+            });
+          }
           resolve();
-        }, 18000); // 3000毫秒即3秒
+        }, 6000); // 3000毫秒即3秒
       });
     };
 
@@ -466,7 +481,6 @@ Page({
       console.log("加载完成 this.saveImgToPhone()");
       // 调用其他函数或执行其他逻辑
       this.saveImageInfo2Server();
-
       this.setData({
         page: "mainPage",
       });
@@ -487,7 +501,7 @@ Page({
   //涂鸦开始
   doodleStart: function (e) {
     var self = this;
-    self.lineWidth = self.lineWidth ? self.lineWidth : 5;
+    self.lineWidth = self.lineWidth ? self.lineWidth : 20;
     self.lineColor = self.lineColor ? self.lineColor : "#000000";
     // 开始画图，隐藏所有的操作栏
     this.setData({
@@ -590,6 +604,9 @@ Page({
   //选定画笔宽度
   widthSliderChange(e) {
     this.lineWidth = e.detail.value;
+    this.setData({
+      lineValue: e.detail.value
+    })
   },
   //选择画笔颜色
   chooseLineColor() {
@@ -641,7 +658,7 @@ Page({
     if (this.doodled) {
       // this.doodled=false
       wx.showLoading({
-        title: "保存涂鸦",
+        title: "龙气定格中",
         mask: true,
       });
       saveDoodle(this, loadImgOnImage);
@@ -658,35 +675,8 @@ Page({
     this.setData({
       page: "mainPage",
     });
-    // const timestamp = Date.now();
-    // console.log('当前时间戳:', timestamp);
-    // const timestampInSeconds = Math.floor(Date.now() / 1000);
-    // console.log('当前时间戳（秒）:', timestampInSeconds);
-    // wx.showModal({
-    //   title: 'Loading',
-    //   // content: '点击任意区域查看引导 GIF，再次进入将不再弹出。',
-    //   content: `涂鸦拼接中 ${  countdownSeconds}`,
-    //   showCancel: false,
-    //   success: (res) => {
-    //     if (res.confirm) {
-    //       console.log("to  saveImgToPhone",new Date())
-    //       console.log("to  saveImgToPhone")
-    //       this.saveImgToPhone();
-    //
-    //       this.setData({
-    //         page: 'mainPage'
-    //       })
-    //     }
-    //   }
-    // });
-    // wx.showLoading({
-    //   title: '加载中...',
-    //   mask: true
-    // });
-  },
 
-  //上传图片到SD
-  toSavePage() {},
+  },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
@@ -707,7 +697,7 @@ Page({
 function chooseImage(self) {
   wx.chooseImage({
     count: 1,
-    sizeType: ["original"], // 可以指定是原图还是压缩图，默认二者都有
+    sizeType: ['compressed'], // 可以指定是原图'original'还是压缩'compressed'图，默认二者都有
     sourceType: ["album", "camera"], // 可以指定来源是相册还是相机，默认二者都有
 
     success: function (res) {
@@ -717,43 +707,43 @@ function chooseImage(self) {
       var tempFilePath_forcheck = tempFilePaths_forcheck[0];
       wx.getImageInfo({
         src: tempFilePath_forcheck,
-        success: function (imageInfo) {
+        success: function(imageInfo) {
           var fileType = imageInfo.type; // 图片文件类型
-          // 判断文件类型是否为图片
-          if (fileType === "png" || fileType === "jpg" || fileType === "jpeg") {
+           // 判断文件类型是否为图片
+          if (fileType=== 'png' || fileType === 'jpg' || fileType === 'jpeg') {
             // 是图片格式，继续处理上传逻辑
             var tempFilePaths = res.tempFilePaths;
             console.log("chooseImage tempFilePaths:::" + tempFilePaths);
             //选好了图片，
             self.setData({
               initImage: tempFilePaths[0],
-              imageNotChoosed: false,
               tempImageSrc: tempFilePaths[0],
               originImageSrc: tempFilePaths[0],
+              doodleImageSrc:"",
+              doodleImageSrcArr:[],
+              resultImage:""
             });
             //把选择好的图片，加载出来
             loadImgOnImage(self);
           } else {
             // 非图片格式，给出提示或执行相应的处理
             wx.showToast({
-              title: "请选择有效的图片文件",
-              icon: "none",
+              title: '请选择有效的图片文件',
+              icon: 'none'
             });
           }
         },
-        fail: function () {
+        fail: function() {
           // 无法获取图片信息，处理失败情况
           wx.showToast({
-            title: "无法获取图片信息",
-            icon: "none",
+            title: '无法获取图片信息',
+            icon: 'none'
           });
-        },
+        }
       });
     },
     fail: function (res) {
-      self.setData({
-        imageNotChoosed: true,
-      });
+      //不做处理
     },
   });
 }
@@ -781,6 +771,31 @@ function loadImgOnImage(self) {
         imgHeight: self.scaleHeight,
         imgTop: self.startY,
         imgLeft: self.startX,
+      });
+      // 绘制新大小的图片到Canvas
+
+      var ctx = wx.createCanvasContext('initImgCanvas');
+      console.log("self.data.imgWidth",self.scaleWidth)
+      console.log("self.data.imgWidth",self.scaleHeight)
+      ctx.drawImage(self.data.initImage, 0, 0, self.scaleWidth, self.scaleHeight);
+      ctx.draw(false, function () {
+        // 将Canvas绘制内容转换为图片，并回调函数中获取base64格式的图片数据
+        wx.canvasToTempFilePath({
+          width: self.data.scaleWidth, // 画布区域的宽度
+          height: self.data.scaleHeight,
+          destWidth: self.data.scaleWidth,  // 输出图片的宽度
+          destHeight: self.data.scaleHeight,
+          fileType: "png",
+          quality: 1,
+          canvasId: 'initImgCanvas',
+          success: function (res) {
+            console.log("===> after dsfdsaf", res.tempFilePath);
+            console.log("===> before dsfdsaf", self.data.initImage);
+            self.setData({
+              initImage: res.tempFilePath,
+            });
+          }
+        });
       });
       wx.hideLoading();
     },
@@ -817,57 +832,81 @@ function loadImgOnCanvas(self) {
 }
 
 // 绘制函数，将多张涂鸦图叠加到 canvas 上
-function drawAllDoodles(tuyaImgsArr, self) {
-  var imagePaths = tuyaImgsArr; // 包含多个图片路径的数组
-  console.log("imagePaths image :::" + imagePaths);
-  self.ctx = wx.createCanvasContext("resultCanvas", self);
-  // 遍历图片路径数组
-  imagePaths.forEach(function (imagePath, index) {
-    // 获取图片信息
-    wx.getImageInfo({
-      src: imagePath,
-      success: function (res) {
-        // 绘制图片
-        self.ctx.drawImage(
-          res.path,
-          0,
-          0,
-          self.data.tempCanvasWidth,
-          self.data.tempCanvasHeight
-        );
+function drawAllDoodles(tuyaImgsArr, self, fn) {
+  var imagePaths = tuyaImgsArr;
+  var loadedImages = [];
 
-        // 如果是最后一张图片，保存图片
-        if (index === imagePaths.length - 1) {
-          self.ctx.draw(false, function () {
-            wx.canvasToTempFilePath({
-              x: 0,
-              y: 0,
-              width: self.data.tempCanvasWidth,
-              height: self.data.tempCanvasHeight,
-              destWidth: self.data.tempCanvasWidth,
-              destHeight: self.data.tempCanvasHeight,
-              fileType: "png",
-              quality: 1,
-              canvasId: "resultCanvas",
-              success: function (res) {
-                wx.hideLoading();
-                self.setData({
-                  resultImagePath: res.tempFilePath,
-                });
-                console.log(
-                  "result all tuya  image :::" + self.data.resultImagePath
-                );
-
-                if (fn) {
-                  fn(self);
-                }
-              },
-            });
-          });
-        }
-      },
+  if (self.data.doodleImageSrcArr.length == 1) {
+    self.setData({
+      resultImagePath:self.data.doodleImageSrcArr[0],
     });
-  });
+    return;
+  }
+  // 加载所有图片
+  Promise.all(
+      imagePaths.map(function (imagePath) {
+        return new Promise(function (resolve, reject) {
+          wx.getImageInfo({
+            src: imagePath,
+            success: function (res) {
+              loadedImages.push(res.path);
+              loadedCount++;
+              resolve();
+            },
+            fail: reject,
+          });
+        });
+      })
+  )
+      .then(function () {
+        // 所有图片加载完成
+        self.ctx = wx.createCanvasContext("resultCanvas", self);
+
+        // 遍历绘制已加载的图片
+        loadedImages.forEach(function (imagePath, index) {
+          self.ctx.drawImage(
+              imagePath,
+              0,
+              0,
+              self.data.tempCanvasWidth,
+              self.data.tempCanvasHeight
+          );
+
+          // 如果是最后一张图片，保存图片
+          if (index === loadedImages.length - 1) {
+            self.ctx.draw(false, function () {
+              wx.canvasToTempFilePath({
+                x: 0,
+                y: 0,
+                width: self.data.tempCanvasWidth,
+                height: self.data.tempCanvasHeight,
+                destWidth: self.data.tempCanvasWidth,
+                destHeight: self.data.tempCanvasHeight,
+                fileType: "png",
+                quality: 1,
+                canvasId: "resultCanvas",
+                success: function (res) {
+                  wx.hideLoading();
+                  self.setData({
+                    resultImagePath: res.tempFilePath,
+                  });
+                  console.log(
+                      "result all tuya  image :::" + self.data.resultImagePath
+                  );
+
+                  if (fn) {
+                    fn(self);
+                  }
+                },
+              });
+            });
+          }
+        });
+      })
+      .catch(function (error) {
+        // 处理图片加载失败的情况
+        console.error("Error loading images:", error);
+      });
 }
 //保存图片到临时路径
 function saveImgUseTempCanvas(self, delay, fn) {
@@ -903,33 +942,6 @@ function saveImgUseTempCanvas(self, delay, fn) {
   }, delay);
 
   drawAllDoodles(self.data.doodleImageSrcArr, self);
-}
-
-//保存涂鸦图到临时地址
-function saveDoodleTempCanvas(self, delay, fn) {
-  setTimeout(function () {
-    //保存用户效果图
-    wx.canvasToTempFilePath({
-      x: 0,
-      y: 0,
-      width: self.data.tempCanvasWidth,
-      height: self.data.tempCanvasHeight,
-      destWidth: self.data.tempCanvasWidth,
-      destHeight: self.data.tempCanvasHeight,
-      fileType: "png",
-      quality: 1,
-      canvasId: "doodleCanvas",
-      success: function (res) {
-        wx.hideLoading();
-        self.setData({
-          doodleImageSrc: res.tempFilePath,
-        });
-        if (fn) {
-          fn(self);
-        }
-      },
-    });
-  }, delay);
 }
 
 //保存涂鸦, myCanvas的涂鸦
